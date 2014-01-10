@@ -5,17 +5,25 @@
     android:layout_height="match_parent"
     >
 		<LinearLayout
+		android:id="@+id/camera_layout"
 	    android:orientation="vertical"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:weightSum="1"
 	    android:background="#ffffffff">
 	    
-   			<com.raimsoft.camera.CameraView
-            android:id="@+id/camera_preview1"
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="0.5" />
+<!--    			<View -->
+<!--             android:id="@+id/camera_preview1" -->
+<!--             android:layout_width="match_parent" -->
+<!--             android:layout_height="0dip" -->
+<!--             android:layout_weight="0.5" /> -->
+   			
+<!-- 			<View -->
+<!--             android:id="@+id/camera_preview2" -->
+<!--             android:layout_width="match_parent" -->
+<!--             android:layout_height="0dip" -->
+<!--             android:layout_weight="0.5" /> -->
+   			
    			
    			
 <!-- 			<com.raimsoft.camera.CameraView -->
@@ -33,6 +41,9 @@
 		    android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
 		    />
+		
+		
+		
 
 
 
