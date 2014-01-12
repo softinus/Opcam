@@ -81,6 +81,9 @@ public class CameraPreview extends Activity implements OnClickListener
 		        mCView2= new CameraView(mContext, true);
 		        mCView2.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));        
 		        mLayout.addView(mCView2);
+		        
+				ShutButton.setText("ME");
+				ShutButton.setEnabled(true);
 			}
     	};
     	
@@ -104,6 +107,9 @@ public class CameraPreview extends Activity implements OnClickListener
 				mImgPreview2.setBackgroundColor(Color.BLACK);
 				//mImgPreview2.setScaleType(ImageView.ScaleType.CENTER);
 		        mLayout.addView(mImgPreview2);
+		        
+				ShutButton.setText("Save -->");
+				ShutButton.setEnabled(true);
 			}
     	};
         
@@ -132,6 +138,7 @@ public class CameraPreview extends Activity implements OnClickListener
         
         ShutButton= (Button) findViewById(R.id.btn_click);        
         ShutButton.setOnClickListener(this);
+        
         ShutButton.setText("YOU");
     }
     
@@ -277,15 +284,22 @@ public class CameraPreview extends Activity implements OnClickListener
 			if(ShutButton.getText().equals("YOU"))
 			{
 				mCView1.mCamera.takePicture(null, null, mPicture1);
-				ShutButton.setText("ME");
+				ShutButton.setText("Loading...");
+				ShutButton.setEnabled(false);
 			}
 			else if(ShutButton.getText().equals("ME"))
 			{	
 				mCView2.mCamera.takePicture(null, null, mPicture2);
-				ShutButton.setText("Save -->");
+				
+				ShutButton.setText("Loading...");
+				ShutButton.setEnabled(false);
+				
 			}
 			else
 			{
+				ShutButton.setText("Loading...");
+				ShutButton.setEnabled(false);
+				
 				Bitmap mBitmapCopy1 = mBitmap1.copy(Config.ARGB_8888, true);
 				Bitmap mBitmapCopy2 = mBitmap2.copy(Config.ARGB_8888, true);
 				
@@ -318,6 +332,7 @@ public class CameraPreview extends Activity implements OnClickListener
 		        mLayout.addView(mImgPreview2);
 		        
 		        ShutButton.setText("YOU");
+		        ShutButton.setEnabled(true);
 			}
 		}
 	}
