@@ -1,10 +1,13 @@
 package com.raimsoft.camera;
 
 import java.io.IOException;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -133,6 +136,9 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback
     {
         // 표시할 영역의 크기를 알았으므로 해당 크기로 Preview를 시작합니다.
         Camera.Parameters parameters = mCamera.getParameters();
+        
+        mCamera.setParameters( SetPreViewSize(parameters) );        
+        
         //parameters.set("orientation", "portrait");
         //parameters.setPreviewSize(480, 800);
         //parameters.setPreviewSize(1080, 1920);
@@ -140,6 +146,73 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback
         mCamera.startPreview();
     }
     
+    // 카메라와 프리뷰 사이즈를 맞춰줌.
+    private Parameters SetPreViewSize(Parameters parameters)
+    {
+    	// TODO Auto-generated method stub
+    	Log.d("<<picture>>", "W:"+parameters.getPictureSize().width+"H:"+parameters.getPictureSize().height);
+    	Log.d("<<preview>>", "W:"+parameters.getPreviewSize().width+"H:"+parameters.getPreviewSize().height);
+
+    	int tempWidth = parameters.getPictureSize().width;
+    	int tempHeight = parameters.getPictureSize().height;
+    	int Result = 0;
+    	int Result2 = 0;
+    	int picSum = 0;
+    	int picSum2 = 0;
+    	int soin = 2;
+
+    	while(tempWidth >= soin && tempHeight >= soin)
+    	{
+    		Result = tempWidth%soin;
+    		Result2 = tempHeight%soin;
+    		if(Result == 0 && Result2 == 0){
+    			picSum = tempWidth/soin;
+    			picSum2 = tempHeight/soin;
+    			System.out.println("PictureWidth :"+tempWidth+"/"+soin+"결과:"+picSum+"나머지:"+Result);
+    			System.out.println("PictureHeight :"+tempHeight+"/"+soin+"결과:"+picSum2+"나머지:"+Result2);
+    			tempWidth = picSum;
+    			tempHeight = picSum2;
+    		}else {
+    			soin++;
+    		}
+
+    	}
+    	System.out.println("최종결과 "+picSum+":"+picSum2);
+
+    	List<Camera.Size> previewSizeList = parameters.getSupportedPreviewSizes();
+    	for (Size size : previewSizeList){
+    		tempWidth = size.width;
+    		tempHeight = size.height;
+    		Result = 0;
+    		Result2 = 0;
+    		int preSum = 0;
+    		int preSum2 = 0;
+    		soin = 2;
+
+    		while(tempWidth >= soin && tempHeight >= soin){
+    			Result = tempWidth%soin;
+    			Result2 = tempHeight%soin;
+    			if(Result == 0 && Result2 == 0){
+    				preSum = tempWidth/soin;
+    				preSum2 = tempHeight/soin;
+    				System.out.println("PreviewWidth :"+tempWidth+"/"+soin+"결과:"+preSum+"나머지:"+Result);
+    				System.out.println("PreviewHeight :"+tempHeight+"/"+soin+"결과:"+preSum2+"나머지:"+Result2);
+    				tempWidth = preSum;
+    				tempHeight = preSum2;
+    			}else {
+    				soin++;
+    			}
+
+    		}
+    		System.out.println("최종결과 "+preSum+":"+preSum2);
+    		if(picSum == preSum && picSum2 == preSum2)
+    		{
+    			parameters.setPreviewSize(size.width, size.height);
+    			break;
+    		}
+    	}
+    	return parameters;
+    }
    
     
     private Camera openFrontFacingCameraGingerbread()
