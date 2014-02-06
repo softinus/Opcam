@@ -8,6 +8,7 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
@@ -41,6 +42,9 @@ public class CameraPreview extends Activity implements OnClickListener
     private ImageView mImgPreview2;
     
     private Button ShutButton;
+    private Button SettingButton;
+    private Button GalleryButton;
+    
 	private PictureCallback mPicture1;
 	private PictureCallback mPicture2;
 	
@@ -82,7 +86,9 @@ public class CameraPreview extends Activity implements OnClickListener
 		        mCView2.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));        
 		        mLayout.addView(mCView2);
 		        
-				ShutButton.setText("ME");
+		        ShutButton.setBackgroundResource(R.drawable.btn_camera_down);
+		        ShutButton.setText("");
+		        ShutButton.setTag("ME");
 				ShutButton.setEnabled(true);
 			}
     	};
@@ -108,7 +114,8 @@ public class CameraPreview extends Activity implements OnClickListener
 				//mImgPreview2.setScaleType(ImageView.ScaleType.CENTER);
 		        mLayout.addView(mImgPreview2);
 		        
-				ShutButton.setText("Save -->");
+		        ShutButton.setText("");
+				ShutButton.setTag("Save -->");
 				ShutButton.setEnabled(true);
 			}
     	};
@@ -139,7 +146,15 @@ public class CameraPreview extends Activity implements OnClickListener
         ShutButton= (Button) findViewById(R.id.btn_click);        
         ShutButton.setOnClickListener(this);
         
-        ShutButton.setText("YOU");
+        SettingButton= (Button) findViewById(R.id.btn_setting);
+        SettingButton.setOnClickListener(this);
+        
+        GalleryButton= (Button) findViewById(R.id.btn_gallery);
+        GalleryButton.setOnClickListener(this);
+        
+        ShutButton.setBackgroundResource(R.drawable.btn_camera_up);
+        ShutButton.setText("");
+        ShutButton.setTag("YOU");
     }
     
     /**
@@ -281,13 +296,13 @@ public class CameraPreview extends Activity implements OnClickListener
 	{
 		if(v.getId() == R.id.btn_click)
 		{
-			if(ShutButton.getText().equals("YOU"))
+			if(ShutButton.getTag().equals("YOU"))
 			{
 				mCView1.mCamera.takePicture(null, null, mPicture1);
 				ShutButton.setText("Loading...");
 				ShutButton.setEnabled(false);
 			}
-			else if(ShutButton.getText().equals("ME"))
+			else if(ShutButton.getTag().equals("ME"))
 			{	
 				mCView2.mCamera.takePicture(null, null, mPicture2);
 				
@@ -331,9 +346,19 @@ public class CameraPreview extends Activity implements OnClickListener
 		        mImgPreview2.setBackgroundColor(Color.BLACK);
 		        mLayout.addView(mImgPreview2);
 		        
-		        ShutButton.setText("YOU");
+		        ShutButton.setText("");
+		        ShutButton.setTag("YOU");
 		        ShutButton.setEnabled(true);
 			}
+		}
+		else if(v.getId() == R.id.btn_setting)
+		{
+			Intent intent= new Intent(CameraPreview.this, SettingsActivity.class);
+			startActivity(intent);
+		}
+		else if(v.getId() == R.id.btn_gallery)
+		{
+			
 		}
 	}
 
