@@ -2,7 +2,6 @@ package com.raimsoft.camera;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -30,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
+
+import com.softinus.camera.R;
 
 public class CameraPreview extends Activity implements OnClickListener
 {    

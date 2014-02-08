@@ -3,9 +3,11 @@ package com.softinus.camera.activity;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,6 +21,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -30,6 +33,8 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
+import com.aviary.android.feather.FeatherActivity;
+import com.aviary.android.feather.library.Constants;
 import com.softinus.camera.R;
 
 public class CameraPreview extends Activity implements OnClickListener
@@ -323,9 +328,18 @@ public class CameraPreview extends Activity implements OnClickListener
 				SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 				String strDate= SDF.format(cal.getTime());
 				
-				if( CombineAndSaveImage(mBitmapCopy1, mBitmapCopy2, true, "opcam_"+strDate+".jpg") )
+				String strSaveFileName= "opcam_"+strDate+".jpg";
+				if( CombineAndSaveImage(mBitmapCopy1, mBitmapCopy2, true, strSaveFileName) )
 				{
-					Toast.makeText(this, "사진 저장 완료.", Toast.LENGTH_SHORT).show();				
+					Toast.makeText(this, "사진 저장 완료.", Toast.LENGTH_SHORT).show();
+					
+//					Intent newIntent = new Intent( this, FeatherActivity.class );
+//					
+//					File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);
+//			        
+//					newIntent.setData( Uri.fromFile(dir) );
+//					newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "your api secret" );
+//					startActivityForResult( newIntent, 1 );    
 				}
 				else
 					Toast.makeText(this, "사진 저장 실패.", Toast.LENGTH_SHORT).show();
@@ -356,12 +370,35 @@ public class CameraPreview extends Activity implements OnClickListener
 		{
 			Intent intent= new Intent(CameraPreview.this, SettingsActivity.class);
 			startActivity(intent);
+			
+			
 		}
 		else if(v.getId() == R.id.btn_gallery)
 		{
 			Intent intent= new Intent(CameraPreview.this, GalleryActivity.class);
 			startActivity(intent);
 		}
+	}
+	
+	@Override
+	public void onActivityResult( int requestCode, int resultCode, Intent data )
+	{
+	    if( resultCode == RESULT_OK )
+	    {
+	        switch( requestCode ) 
+	        {
+	            case 1:
+	                // output image path
+	                Uri mImageUri = data.getData();
+	                Bundle extra = data.getExtras();
+	                    if( null != extra ) 
+	                    {
+	                        // image has been changed by the user?
+	                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
+	                    }
+	                break;
+	        }
+	    }
 	}
 
 }
