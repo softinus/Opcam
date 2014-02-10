@@ -32,27 +32,27 @@
         </activity>
         
         <!-- Main Editor Activity -->
-	<activity
-    android:name="com.aviary.android.feather.FeatherActivity"
-    android:configChanges="orientation|keyboardHidden|screenSize"
-    android:screenOrientation="unspecified"
-    android:hardwareAccelerated="true"
-    android:largeHeap="true"
-    android:process=":aviarysdk"
-    android:theme="@style/AviaryTheme" />
-	
-	
-	<!-- Alert -->
-    <activity
-        android:name="com.aviary.android.feather.AlertActivity"
-        android:launchMode="standard"
-        android:noHistory="true"
-        android:theme="@style/AviaryTheme.Dialog">
-        <intent-filter>
-            <action android:name="aviary.intent.action.ALERT"/>
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-    </activity>
+		<activity
+	    android:name="com.aviary.android.feather.FeatherActivity"
+	    android:configChanges="orientation|keyboardHidden|screenSize"
+	    android:screenOrientation="unspecified"
+	    android:hardwareAccelerated="true"
+	    android:largeHeap="true"
+	    android:process=":aviarysdk"
+	    android:theme="@style/AviaryTheme" />
+		
+		
+		<!-- Alert -->
+	    <activity
+	        android:name="com.aviary.android.feather.AlertActivity"
+	        android:launchMode="standard"
+	        android:noHistory="true"
+	        android:theme="@style/AviaryTheme.Dialog">
+	        <intent-filter>
+	            <action android:name="aviary.intent.action.ALERT"/>
+	            <category android:name="android.intent.category.DEFAULT" />
+	        </intent-filter>
+	    </activity>
 
     <!-- CDS Content Service -->
     <service
