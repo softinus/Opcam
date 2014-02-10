@@ -333,13 +333,13 @@ public class CameraPreview extends Activity implements OnClickListener
 				{
 					Toast.makeText(this, "사진 저장 완료.", Toast.LENGTH_SHORT).show();
 					
-//					Intent newIntent = new Intent( this, FeatherActivity.class );
-//					
-//					File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);
-//			        
-//					newIntent.setData( Uri.fromFile(dir) );
-//					newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "your api secret" );
-//					startActivityForResult( newIntent, 1 );    
+					Intent newIntent = new Intent( this, FeatherActivity.class );
+					
+					File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);
+			        
+					newIntent.setData( Uri.fromFile(dir) );
+					newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "your api secret" );
+					startActivityForResult( newIntent, 1 );    
 				}
 				else
 					Toast.makeText(this, "사진 저장 실패.", Toast.LENGTH_SHORT).show();
