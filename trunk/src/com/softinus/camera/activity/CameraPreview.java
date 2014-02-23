@@ -338,7 +338,7 @@ public class CameraPreview extends Activity implements OnClickListener
 					File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);
 			        
 					newIntent.setData( Uri.fromFile(dir) );
-					newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "your api secret" );
+					newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
 					startActivityForResult( newIntent, 1 );    
 				}
 				else
@@ -395,6 +395,9 @@ public class CameraPreview extends Activity implements OnClickListener
 	                    {
 	                        // image has been changed by the user?
 	                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
+	                      
+	                        Intent shareIntent = new Intent( this, SNSShareActivity.class );
+	                        startActivity(shareIntent);
 	                    }
 	                break;
 	        }
