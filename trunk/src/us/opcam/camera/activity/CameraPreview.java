@@ -1,13 +1,12 @@
-package com.softinus.camera.activity;
+package us.opcam.camera.activity;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
+import us.opcam.camera.R;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -35,7 +34,6 @@ import android.widget.Toast;
 
 import com.aviary.android.feather.FeatherActivity;
 import com.aviary.android.feather.library.Constants;
-import com.softinus.camera.R;
 
 public class CameraPreview extends Activity implements OnClickListener
 {    

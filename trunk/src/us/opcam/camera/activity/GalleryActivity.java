@@ -1,16 +1,16 @@
-package com.softinus.camera.activity;
+package us.opcam.camera.activity;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import us.opcam.camera.R;
+import us.opcam.camera.util.GalleryAdapter;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 
 import com.origamilabs.library.views.StaggeredGridView;
-import com.softinus.camera.R;
-import com.softinus.camera.util.GalleryAdapter;
 
 public class GalleryActivity extends Activity 
 {

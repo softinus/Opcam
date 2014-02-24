@@ -1,11 +1,8 @@
-package com.softinus.camera.activity;
+package us.opcam.camera.activity;
 
-import com.softinus.camera.R;
-import com.softinus.camera.R.layout;
-import com.softinus.camera.R.menu;
-
-import android.os.Bundle;
+import us.opcam.camera.R;
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
 
 public class SNSShareActivity extends Activity {

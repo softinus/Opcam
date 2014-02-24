@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.softinus.camera"
+    package="us.opcam.camera"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -12,7 +12,7 @@
             android:value="7c77fe1ad9f85a30" />
 
         <activity
-            android:name="com.softinus.camera.activity.CameraPreview"
+            android:name="us.opcam.camera.activity.CameraPreview"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -22,11 +22,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.softinus.camera.activity.SettingsActivity"
+            android:name="us.opcam.camera.activity.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name="com.softinus.camera.activity.GalleryActivity"
+            android:name="us.opcam.camera.activity.GalleryActivity"
             android:label="@string/title_activity_gallery" >
         </activity>
 
@@ -86,7 +86,7 @@
         </receiver>
 
         <activity
-            android:name="com.softinus.camera.activity.SNSShareActivity"
+            android:name="us.opcam.camera.activity.SNSShareActivity"
             android:label="@string/title_activity_snsshare" >
         </activity>
     </application>
