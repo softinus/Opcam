@@ -1,4 +1,4 @@
-package com.softinus.camera.util;
+package us.opcam.camera.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;

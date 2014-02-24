@@ -1,5 +1,6 @@
-package com.softinus.camera.util;
+package us.opcam.camera.util;
 
+import us.opcam.camera.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
-import com.softinus.camera.R;
 
 public class GalleryAdapter extends ArrayAdapter<String> 
 {

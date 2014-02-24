@@ -1,4 +1,4 @@
-package com.softinus.camera.activity;
+package us.opcam.camera.activity;
 
 import java.io.IOException;
 import java.util.List;

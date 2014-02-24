@@ -1,4 +1,4 @@
-package com.softinus.camera.activity;
+package us.opcam.camera.activity;
 
 import android.annotation.SuppressLint;
 import android.hardware.Camera;
