@@ -118,9 +118,18 @@ public class CameraPreview extends Activity implements OnClickListener
 				//mImgPreview2.setScaleType(ImageView.ScaleType.CENTER);
 		        mLayout.addView(mImgPreview2);
 		        
-		        ShutButton.setText("");
-				ShutButton.setTag("Save -->");
-				ShutButton.setEnabled(true);
+//		        ShutButton.setText("");
+//				ShutButton.setTag("Save -->");
+//				ShutButton.setEnabled(true);
+				
+				ShutButton.setText("Loading...");
+				ShutButton.setEnabled(false);
+				
+				// 사진 합쳐서 저장하고 Aviary 사진 편집으로 넘어감.
+				SaveFileAndSendtoAviary();
+				
+				// 사진을 다시 찍을 수 있도록 초기화
+				RefreshAllView();
 			}
     	};
         
@@ -160,6 +169,120 @@ public class CameraPreview extends Activity implements OnClickListener
         ShutButton.setText("");
         ShutButton.setTag("YOU");
     }
+    
+
+
+	@Override
+	public void onClick(View v)
+	{
+		if(v.getId() == R.id.btn_click)
+		{
+			if(ShutButton.getTag().equals("YOU"))
+			{
+				mCView1.mCamera.takePicture(null, null, mPicture1);
+				ShutButton.setText("Loading...");
+				ShutButton.setEnabled(false);
+			}
+			else if(ShutButton.getTag().equals("ME"))
+			{	
+				mCView2.mCamera.takePicture(null, null, mPicture2);
+				
+				ShutButton.setText("Loading...");
+				ShutButton.setEnabled(false);
+				
+			}
+		}
+		else if(v.getId() == R.id.btn_setting)
+		{
+			Intent intent= new Intent(CameraPreview.this, SettingsActivity.class);
+			startActivity(intent);
+			
+			
+		}
+		else if(v.getId() == R.id.btn_gallery)
+		{
+			Intent intent= new Intent(CameraPreview.this, GalleryActivity.class);
+			startActivity(intent);
+		}
+	}
+
+
+
+	private void RefreshAllView() {
+		// 레이아웃 삭제.
+		mLayout.removeAllViews();
+		
+		mCView1= new CameraView(this, false);
+		mCView1.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));        
+		mLayout.addView(mCView1);
+		
+		mImgPreview2= new ImageView(this);
+		mCView1.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
+		mImgPreview2.setBackgroundColor(Color.BLACK);
+		mLayout.addView(mImgPreview2);
+		
+		ShutButton.setText("");
+		ShutButton.setTag("YOU");
+		ShutButton.setEnabled(true);
+	}
+
+	// 사진 합쳐서 저장하고 Aviary 사진 편집으로 넘어감.
+	private void SaveFileAndSendtoAviary()
+	{
+		Bitmap mBitmapCopy1 = mBitmap1.copy(Config.ARGB_8888, true);
+		Bitmap mBitmapCopy2 = mBitmap2.copy(Config.ARGB_8888, true);
+		
+		Calendar cal= Calendar.getInstance();
+		SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String strDate= SDF.format(cal.getTime());
+		
+		String strSaveFileName= "opcam_"+strDate+".jpg";
+		if( CombineAndSaveImage(mBitmapCopy1, mBitmapCopy2, true, strSaveFileName) )
+		{
+			Toast.makeText(this, "사진 저장 완료.", Toast.LENGTH_SHORT).show();
+			
+			Intent newIntent = new Intent( this, FeatherActivity.class );
+			
+			File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);
+		    
+			newIntent.setData( Uri.fromFile(dir) );
+			newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
+			startActivityForResult( newIntent, 1 );    
+		}
+		else
+			Toast.makeText(this, "사진 저장 실패.", Toast.LENGTH_SHORT).show();
+		
+		mBitmapCopy1= null;
+		mBitmapCopy2= null;
+		mBitmap1= null;
+		mBitmap2= null;
+	}
+	
+	@Override
+	public void onActivityResult( int requestCode, int resultCode, Intent data )
+	{
+	    if( resultCode == RESULT_OK )
+	    {
+	        switch( requestCode ) 
+	        {
+	            case 1:
+	                // output image path
+	                Uri mImageUri = data.getData();
+	                Bundle extra = data.getExtras();
+	                    if( null != extra ) 
+	                    {
+	                        // image has been changed by the user?
+	                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
+	                      
+	                        Intent shareIntent = new Intent( this, SNSShareActivity.class );
+	                        startActivity(shareIntent);
+	                    }
+	                break;
+	        }
+	    }
+	}
+	
+	
     
     /**
      * 이미지 조절
@@ -279,7 +402,7 @@ public class CameraPreview extends Activity implements OnClickListener
     	try
     	{
     		FileOutputStream fos = new FileOutputStream(file);
-    		bitmap.compress(CompressFormat.JPEG, 100, fos);
+    		bitmap.compress(CompressFormat.JPEG, 80, fos);
 
     		fos.close();
     		bitmap.recycle();
@@ -294,112 +417,5 @@ public class CameraPreview extends Activity implements OnClickListener
     
 
     
-
-	@Override
-	public void onClick(View v)
-	{
-		if(v.getId() == R.id.btn_click)
-		{
-			if(ShutButton.getTag().equals("YOU"))
-			{
-				mCView1.mCamera.takePicture(null, null, mPicture1);
-				ShutButton.setText("Loading...");
-				ShutButton.setEnabled(false);
-			}
-			else if(ShutButton.getTag().equals("ME"))
-			{	
-				mCView2.mCamera.takePicture(null, null, mPicture2);
-				
-				ShutButton.setText("Loading...");
-				ShutButton.setEnabled(false);
-				
-			}
-			else
-			{
-				ShutButton.setText("Loading...");
-				ShutButton.setEnabled(false);
-				
-				Bitmap mBitmapCopy1 = mBitmap1.copy(Config.ARGB_8888, true);
-				Bitmap mBitmapCopy2 = mBitmap2.copy(Config.ARGB_8888, true);
-				
-				Calendar cal= Calendar.getInstance();
-				SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-				String strDate= SDF.format(cal.getTime());
-				
-				String strSaveFileName= "opcam_"+strDate+".jpg";
-				if( CombineAndSaveImage(mBitmapCopy1, mBitmapCopy2, true, strSaveFileName) )
-				{
-					Toast.makeText(this, "사진 저장 완료.", Toast.LENGTH_SHORT).show();
-					
-					Intent newIntent = new Intent( this, FeatherActivity.class );
-					
-					File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);
-			        
-					newIntent.setData( Uri.fromFile(dir) );
-					newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
-					startActivityForResult( newIntent, 1 );    
-				}
-				else
-					Toast.makeText(this, "사진 저장 실패.", Toast.LENGTH_SHORT).show();
-				
-				mBitmapCopy1= null;
-				mBitmapCopy2= null;
-				mBitmap1= null;
-				mBitmap2= null;
-				
-				// 레이아웃 삭제.
-				mLayout.removeAllViews();
-				
-				mCView1= new CameraView(this, false);
-		        mCView1.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));        
-		        mLayout.addView(mCView1);
-				
-		        mImgPreview2= new ImageView(this);
-		        mCView1.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
-		        mImgPreview2.setBackgroundColor(Color.BLACK);
-		        mLayout.addView(mImgPreview2);
-		        
-		        ShutButton.setText("");
-		        ShutButton.setTag("YOU");
-		        ShutButton.setEnabled(true);
-			}
-		}
-		else if(v.getId() == R.id.btn_setting)
-		{
-			Intent intent= new Intent(CameraPreview.this, SettingsActivity.class);
-			startActivity(intent);
-			
-			
-		}
-		else if(v.getId() == R.id.btn_gallery)
-		{
-			Intent intent= new Intent(CameraPreview.this, GalleryActivity.class);
-			startActivity(intent);
-		}
-	}
-	
-	@Override
-	public void onActivityResult( int requestCode, int resultCode, Intent data )
-	{
-	    if( resultCode == RESULT_OK )
-	    {
-	        switch( requestCode ) 
-	        {
-	            case 1:
-	                // output image path
-	                Uri mImageUri = data.getData();
-	                Bundle extra = data.getExtras();
-	                    if( null != extra ) 
-	                    {
-	                        // image has been changed by the user?
-	                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
-	                      
-	                        Intent shareIntent = new Intent( this, SNSShareActivity.class );
-	                        startActivity(shareIntent);
-	                    }
-	                break;
-	        }
-	    }
-	}
 
 }

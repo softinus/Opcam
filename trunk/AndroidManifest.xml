@@ -71,7 +71,7 @@
         -->
         <provider
             android:name="com.aviary.android.feather.cds.AviaryCdsProvider"
-            android:authorities="com.softinus.camera.AviaryCdsProvider"
+            android:authorities="us.opcam.camera.AviaryCdsProvider"
             android:exported="false"
             android:process=":aviarycds"
             android:syncable="true" />
