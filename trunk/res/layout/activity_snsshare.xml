@@ -8,22 +8,52 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".SNSShareActivity" >
 
+    <LinearLayout
+        android:id="@+id/layout_share_box"
+        android:weightSum="100"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:background="@drawable/theme_share">
+        
+        <ImageView
+        android:id="@+id/img_for_share"
+        android:layout_width="0dp"
+       	android:layout_weight="25"
+       	android:padding="10dp"
+        android:layout_height="match_parent"
+		></ImageView>
+        
+        <EditText
+	    android:id="@+id/edt_for_share"
+	    android:layout_width="0dp"
+	  	android:layout_weight="75"
+	  	android:paddingLeft="10dp"
+	   	android:layout_height="match_parent"
+	   	android:hint="Tell Your Story..."
+	    ></EditText>
+        
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/btn_share_kakaostory"
+        android:layout_below="@+id/layout_share_box"
+        android:layout_marginTop="10dip"
+        android:padding="10dp"
         android:layout_centerHorizontal="true"  
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Share to KakaoStory">
+        android:text="Kakaostory">
     </Button>
     
     <Button
         android:id="@+id/btn_share_facebook"
-        android:layout_centerHorizontal="true"  
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_below="@+id/btn_share_kakaostory"
         android:layout_marginTop="10dip"
+        android:padding="10dp"
+        android:layout_centerHorizontal="true"  
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"        
         android:text="Share to Facebook">
     </Button>
 
