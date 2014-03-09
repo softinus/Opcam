@@ -5,11 +5,17 @@
     android:layout_height="match_parent"
     tools:context=".GalleryActivity" >
 
-    <com.origamilabs.library.views.StaggeredGridView
-        android:id="@+id/staggeredGridView1"
-        staggered:numColumns="2"
-        staggered:drawSelectorOnTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" /> 
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:columnWidth="100dp"
+        android:gravity="center"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="5dp"
+        android:drawSelectorOnTop="true"
+        android:stretchMode="columnWidth" >
+    </GridView>
 
 </RelativeLayout>
