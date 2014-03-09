@@ -21,13 +21,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name="us.opcam.camera.activity.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="us.opcam.camera.activity.GalleryActivity"
-            android:label="@string/title_activity_gallery" >
+            android:label="@string/title_activity_gallery"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Main Editor Activity -->
@@ -39,6 +42,12 @@
             android:process=":aviarysdk"
             android:screenOrientation="unspecified"
             android:theme="@style/AviaryTheme" />
+        
+        <activity
+            android:name="us.opcam.camera.activity.SNSShareActivity"
+            android:label="@string/title_activity_snsshare"
+            android:screenOrientation="portrait">
+        </activity>
 
         <!-- Alert -->
         <activity
@@ -85,10 +94,7 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name="us.opcam.camera.activity.SNSShareActivity"
-            android:label="@string/title_activity_snsshare" >
-        </activity>
+        
     </application>
 
     <uses-sdk

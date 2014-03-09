@@ -122,7 +122,7 @@ public class CameraPreview extends Activity implements OnClickListener
 //				ShutButton.setTag("Save -->");
 //				ShutButton.setEnabled(true);
 				
-				ShutButton.setText("Loading...");
+				//ShutButton.setText("Loading...");
 				ShutButton.setEnabled(false);
 				
 				// 사진 합쳐서 저장하고 Aviary 사진 편집으로 넘어감.
@@ -180,14 +180,14 @@ public class CameraPreview extends Activity implements OnClickListener
 			if(ShutButton.getTag().equals("YOU"))
 			{
 				mCView1.mCamera.takePicture(null, null, mPicture1);
-				ShutButton.setText("Loading...");
+				//ShutButton.setText("Loading...");
 				ShutButton.setEnabled(false);
 			}
 			else if(ShutButton.getTag().equals("ME"))
 			{	
 				mCView2.mCamera.takePicture(null, null, mPicture2);
 				
-				ShutButton.setText("Loading...");
+				//ShutButton.setText("Loading...");
 				ShutButton.setEnabled(false);
 				
 			}
@@ -275,6 +275,8 @@ public class CameraPreview extends Activity implements OnClickListener
 	                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
 	                      
 	                        Intent shareIntent = new Intent( this, SNSShareActivity.class );
+	                        shareIntent.putExtra("contants", extra);
+	                        shareIntent.putExtra("path", mImageUri);
 	                        startActivity(shareIntent);
 	                    }
 	                break;
