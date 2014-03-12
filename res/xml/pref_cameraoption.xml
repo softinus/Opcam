@@ -1,0 +1,12 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:defaultValue="2"
+        android:entries="@array/pref_option_resolutions_list_titles"
+        android:entryValues="@array/pref_option_resolutions_list_values"
+        android:key="option_resolutions_list_titles"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_option_resolution" />
+    
+</PreferenceScreen>

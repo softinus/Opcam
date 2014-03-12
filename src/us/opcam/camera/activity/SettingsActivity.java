@@ -52,41 +52,38 @@ public class SettingsActivity extends PreferenceActivity {
 	 * device configuration dictates that a simplified, single-pane UI should be
 	 * shown.
 	 */
-	private void setupSimplePreferencesScreen() {
-		if (!isSimplePreferences(this)) {
+	private void setupSimplePreferencesScreen()
+	{
+		if (!isSimplePreferences(this))
 			return;
-		}
+		
 
 		// In the simplified UI, fragments are not used at all and we instead
 		// use the older PreferenceActivity APIs.
 
 		// Add 'general' preferences.
-		addPreferencesFromResource(R.xml.pref_general);
-
-		// Add 'notifications' preferences, and a corresponding header.
 		PreferenceCategory fakeHeader = new PreferenceCategory(this);
-		fakeHeader.setTitle(R.string.pref_header_notifications);
-		getPreferenceScreen().addPreference(fakeHeader);
-		addPreferencesFromResource(R.xml.pref_notification);
-
-		// Add 'data and sync' preferences, and a corresponding header.
+		fakeHeader.setTitle("CAPTURE PROCESS");
+		addPreferencesFromResource(R.xml.pref_process);
+		
 		fakeHeader = new PreferenceCategory(this);
-		fakeHeader.setTitle(R.string.pref_header_data_sync);
+		fakeHeader.setTitle("CAMERA SETTING");
 		getPreferenceScreen().addPreference(fakeHeader);
-		addPreferencesFromResource(R.xml.pref_data_sync);
+		addPreferencesFromResource(R.xml.pref_cameraoption);
 
 		// Bind the summaries of EditText/List/Dialog/Ringtone preferences to
 		// their values. When their values change, their summaries are updated
 		// to reflect the new value, per the Android Design guidelines.
-		bindPreferenceSummaryToValue(findPreference("example_text"));
-		bindPreferenceSummaryToValue(findPreference("example_list"));
-		bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
-		bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+//		bindPreferenceSummaryToValue(findPreference("example_text"));
+//		bindPreferenceSummaryToValue(findPreference("example_list"));
+//		bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+//		bindPreferenceSummaryToValue(findPreference("sync_frequency"));
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean onIsMultiPane() {
+	public boolean onIsMultiPane()
+	{
 		return isXLargeTablet(this) && !isSimplePreferences(this);
 	}
 
@@ -94,7 +91,8 @@ public class SettingsActivity extends PreferenceActivity {
 	 * Helper method to determine if the device has an extra-large screen. For
 	 * example, 10" tablets are extra-large.
 	 */
-	private static boolean isXLargeTablet(Context context) {
+	private static boolean isXLargeTablet(Context context)
+	{
 		return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
 	}
 
@@ -105,7 +103,8 @@ public class SettingsActivity extends PreferenceActivity {
 	 * doesn't have an extra-large screen. In these cases, a single-pane
 	 * "simplified" settings UI should be shown.
 	 */
-	private static boolean isSimplePreferences(Context context) {
+	private static boolean isSimplePreferences(Context context)
+	{
 		return ALWAYS_SIMPLE_PREFS
 				|| Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
 				|| !isXLargeTablet(context);
