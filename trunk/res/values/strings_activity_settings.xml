@@ -3,6 +3,25 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+    
+    <!-- Opcam used are below -->
+    <string name="pref_process_skip_effect_step">Skip Effect Step</string>
+    <string name="pref_process_skip_share_step">Skip Share Step</string>
+    <string name="pref_process_auto_saving">Auto Save</string>
+    
+    
+    <string name="pref_option_resolution">Camera resolution</string>
+    
+    <string-array name="pref_option_resolutions_list_titles">
+        <item>Low Quality</item>
+        <item>Mid Quality</item>
+        <item>High Quality</item>
+    </string-array>
+    <string-array name="pref_option_resolutions_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
 
     <!-- Example General settings -->

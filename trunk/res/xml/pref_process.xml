@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="process_skip_effect_step"
+        android:title="@string/pref_process_skip_effect_step" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="process_skip_share_step"
+        android:title="@string/pref_process_skip_share_step" />
+        
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="process_auto_saving"
+        android:title="@string/pref_process_auto_saving" />
+
+</PreferenceScreen>

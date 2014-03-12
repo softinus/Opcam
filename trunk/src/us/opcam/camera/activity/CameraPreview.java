@@ -1,7 +1,9 @@
 package us.opcam.camera.activity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -9,6 +11,7 @@ import us.opcam.camera.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
@@ -23,6 +26,7 @@ import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore.Images;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -55,6 +59,10 @@ public class CameraPreview extends Activity implements OnClickListener
 	private Context mContext;
 //    private boolean bBackDone= false;
 //    private boolean bFrontDone= false;
+	private boolean bSkipEffect= false;
+	private boolean bSkipShare= false;
+	
+	private Uri uCurrentPhoto= null;
     
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -78,7 +86,7 @@ public class CameraPreview extends Activity implements OnClickListener
 		        mBitmap1 = BitmapFactory.decodeByteArray(data, 0, data.length);
 				
 				// 비트맵 리샘플링, 로테이트 후 다시 적용.
-		        mBitmap1= ImageComposeMatrix(mBitmap1, 1000, 1000, 90);
+		        mBitmap1= ImageComposeMatrix(mBitmap1, 780, 1000, 90);
 		        //mBitmap1= ImageComposeMatrix(mBitmap1, true, 2, 90);		
 				mImgPreview1.setImageBitmap(mBitmap1);
 				//mImgPreview1.setScaleType(ImageView.ScaleType.CENTER); 
@@ -112,7 +120,7 @@ public class CameraPreview extends Activity implements OnClickListener
 				mBitmap2= BitmapFactory.decodeByteArray(data, 0, data.length);
 				
 				// 비트맵 리샘플링, 로테이트 후 다시 적용.
-				mBitmap2= ImageComposeMatrix(mBitmap2, 1000, 1000, -90);
+				mBitmap2= ImageComposeMatrix(mBitmap2, 780, 1000, -90);
 				mImgPreview2.setImageBitmap(mBitmap2);
 				mImgPreview2.setBackgroundColor(Color.BLACK);
 				//mImgPreview2.setScaleType(ImageView.ScaleType.CENTER);
@@ -125,8 +133,25 @@ public class CameraPreview extends Activity implements OnClickListener
 				//ShutButton.setText("Loading...");
 				ShutButton.setEnabled(false);
 				
-				// 사진 합쳐서 저장하고 Aviary 사진 편집으로 넘어감.
-				SaveFileAndSendtoAviary();
+				SharedPreferences prefs =getSharedPreferences("test", MODE_PRIVATE);
+	            bSkipEffect= prefs.getBoolean("process_skip_effect_step", false); // 키값, 디폴트값
+	            bSkipShare= prefs.getBoolean("process_skip_share_step", false); // 키값, 디폴트값
+	            
+	            uCurrentPhoto= SaveBitmapFile();
+	            
+	            if(bSkipEffect)	// effect 생략하면
+	            {
+	            	if(bSkipShare)	// share 생략하면
+	            	{
+	            		GotoShareActivity(uCurrentPhoto, null);
+	            	}
+	            }
+	            else
+	            {
+	            	// 사진 합쳐서 저장하고 Aviary 사진 편집으로 넘어감.
+	            	GotoAviary(uCurrentPhoto);	            	
+	            }
+				
 				
 				// 사진을 다시 찍을 수 있도록 초기화
 				RefreshAllView();
@@ -208,7 +233,8 @@ public class CameraPreview extends Activity implements OnClickListener
 
 
 
-	private void RefreshAllView() {
+	private void RefreshAllView()
+	{
 		// 레이아웃 삭제.
 		mLayout.removeAllViews();
 		
@@ -225,10 +251,12 @@ public class CameraPreview extends Activity implements OnClickListener
 		ShutButton.setTag("YOU");
 		ShutButton.setEnabled(true);
 	}
-
-	// 사진 합쳐서 저장하고 Aviary 사진 편집으로 넘어감.
-	private void SaveFileAndSendtoAviary()
+	
+	// 합쳐서 사진으로 저장함.
+	private Uri SaveBitmapFile()
 	{
+		Uri uRes= null;
+		
 		Bitmap mBitmapCopy1 = mBitmap1.copy(Config.ARGB_8888, true);
 		Bitmap mBitmapCopy2 = mBitmap2.copy(Config.ARGB_8888, true);
 		
@@ -241,21 +269,54 @@ public class CameraPreview extends Activity implements OnClickListener
 		{
 			Toast.makeText(this, "사진 저장 완료.", Toast.LENGTH_SHORT).show();
 			
-			Intent newIntent = new Intent( this, FeatherActivity.class );
-			
-			File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);
-		    
-			newIntent.setData( Uri.fromFile(dir) );
-			newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
-			startActivityForResult( newIntent, 1 );    
+			File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);			
+			uRes= Uri.fromFile(dir);
 		}
-		else
-			Toast.makeText(this, "사진 저장 실패.", Toast.LENGTH_SHORT).show();
-		
 		mBitmapCopy1= null;
 		mBitmapCopy2= null;
 		mBitmap1= null;
 		mBitmap2= null;
+		
+		return uRes;
+	}
+	
+	// 해당 Uri를 Aviary로 전송함.
+	private void GotoAviary(Uri uPath)
+	{
+		Intent newIntent = new Intent( this, FeatherActivity.class );
+		newIntent.setData( uPath );
+		newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
+		startActivityForResult( newIntent, 1 );
+	}
+
+	private void GotoShareActivity(Uri mImageUri, Bundle extra)
+	{
+		Intent shareIntent = new Intent( this, SNSShareActivity.class );
+		shareIntent.putExtra("contants", extra);
+		shareIntent.putExtra("path", mImageUri);
+		startActivity(shareIntent);
+	}
+	
+	private void OverwriteBitmap(Uri modifyPhoto)
+	{
+    	try
+    	{
+			Bitmap bmpModify= Images.Media.getBitmap(getContentResolver(), modifyPhoto);
+			File pCurrentFile= new File(uCurrentPhoto.getPath());
+			
+    		FileOutputStream fos = new FileOutputStream(pCurrentFile);
+    		bmpModify.compress(CompressFormat.JPEG, 80, fos);
+
+    		fos.close();
+    		bmpModify.recycle();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch(Exception e) {
+    		e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -274,15 +335,19 @@ public class CameraPreview extends Activity implements OnClickListener
 	                        // image has been changed by the user?
 	                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
 	                      
-	                        Intent shareIntent = new Intent( this, SNSShareActivity.class );
-	                        shareIntent.putExtra("contants", extra);
-	                        shareIntent.putExtra("path", mImageUri);
-	                        startActivity(shareIntent);
+	                        OverwriteBitmap(mImageUri);
+	                        
+	                        if(!bSkipShare)
+	                        	GotoShareActivity(uCurrentPhoto, extra);
 	                    }
 	                break;
 	        }
 	    }
 	}
+
+
+
+
 	
 	
     
