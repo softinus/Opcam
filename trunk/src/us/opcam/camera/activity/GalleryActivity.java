@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import us.opcam.camera.R;
-import us.opcam.camera.util.GridViewAdapter;
 import us.opcam.camera.util.ImageItem;
+import us.opcam.camera.view.GridViewAdapter;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
