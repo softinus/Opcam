@@ -58,6 +58,24 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem>
 		return row;
 	}
 
+	@Override
+	public int getCount()
+	{
+		return data.size();
+	}
+
+	@Override
+	public ImageItem getItem(int position)
+	{
+		return null;
+	}
+
+	@Override
+	public long getItemId(int position)
+	{
+		return 0;
+	}
+
 	static class ViewHolder
 	{
 		TextView imageTitle;

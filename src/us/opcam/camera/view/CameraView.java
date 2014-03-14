@@ -1,4 +1,4 @@
-package us.opcam.camera.activity;
+package us.opcam.camera.view;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,10 +15,10 @@ import android.view.SurfaceView;
 
 
 @SuppressLint("NewApi")
-class CameraView extends SurfaceView implements SurfaceHolder.Callback
+public class CameraView extends SurfaceView implements SurfaceHolder.Callback
 {
     SurfaceHolder mHolder;
-    Camera mCamera;
+    public Camera mCamera;
     
     static boolean bAlreadyCreated= false;
     boolean bFrontCamera= false;
@@ -111,7 +111,7 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback
     /**
      * 카메라 닫음
      */
-    void ReleaseCamera()
+    public void ReleaseCamera()
     {
     	if (mCamera != null)
     	{
@@ -180,7 +180,8 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback
     	System.out.println("최종결과 "+picSum+":"+picSum2);
 
     	List<Camera.Size> previewSizeList = parameters.getSupportedPreviewSizes();
-    	for (Size size : previewSizeList){
+    	for (Size size : previewSizeList)
+    	{
     		tempWidth = size.width;
     		tempHeight = size.height;
     		Result = 0;
@@ -189,10 +190,13 @@ class CameraView extends SurfaceView implements SurfaceHolder.Callback
     		int preSum2 = 0;
     		soin = 2;
 
-    		while(tempWidth >= soin && tempHeight >= soin){
-    			Result = tempWidth%soin;
-    			Result2 = tempHeight%soin;
-    			if(Result == 0 && Result2 == 0){
+    		while(tempWidth >= soin && tempHeight >= soin)
+    		{
+    			Result = tempWidth % soin;
+    			Result2 = tempHeight % soin;
+    			
+    			if(Result == 0 && Result2 == 0)
+    			{
     				preSum = tempWidth/soin;
     				preSum2 = tempHeight/soin;
     				System.out.println("PreviewWidth :"+tempWidth+"/"+soin+"결과:"+preSum+"나머지:"+Result);
