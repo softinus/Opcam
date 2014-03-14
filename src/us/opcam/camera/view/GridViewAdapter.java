@@ -1,8 +1,9 @@
-package us.opcam.camera.util;
+package us.opcam.camera.view;
 
 import java.util.ArrayList;
 
 import us.opcam.camera.R;
+import us.opcam.camera.util.ImageItem;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
