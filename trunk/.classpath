@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="/Aviary-SDK"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/StaggeredGridView"/>
-	<classpathentry kind="lib" path="libs/android-query.0.26.7.jar"/>
+	<classpathentry kind="lib" path="libs/android-query-full.0.26.7.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

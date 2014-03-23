@@ -52,7 +52,18 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
    		android:layout_marginRight="15dp"
-        android:text="Share to Facebook">
+        android:text="Share to Facebook"
+        android:onClick="ShareToFacebook"
+        >
     </Button>
+    
+    <ProgressBar android:id="@+id/ProgressBar" 
+          android:layout_width="wrap_content" 
+          android:layout_height="wrap_content"
+          android:visibility="invisible"
+          style="?android:attr/progressBarStyleSmall" /> 
+          
+<!--     <ProgressBar  -->
+<!--         android:id="@+id/progress"/> -->
 
 </RelativeLayout>

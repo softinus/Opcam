@@ -166,7 +166,7 @@ public class CameraPreview extends Activity implements OnClickListener
         //mCView = new CameraView(this);
         //setContentView(mCView);
         
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_camera);
         mLayout = (LinearLayout) findViewById(R.id.camera_layout);
         //mCView= (CameraView) findViewById(R.id.camera_preview1);
         
