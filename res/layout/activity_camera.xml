@@ -34,7 +34,7 @@
 <!--             android:layout_weight="0.5" /> -->
    			
 	    
-	</LinearLayout>
+		</LinearLayout>
 
 		<Button
 		    android:id="@+id/btn_click"
