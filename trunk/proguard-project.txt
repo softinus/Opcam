@@ -81,3 +81,6 @@
 -dontwarn android.support.**
 -keep class android.support.v4.** { *; }
 -keep interface android.support.v4.** { *; }
+
+-keep class com.facebook.** { *; }
+-keepattributes Signature
