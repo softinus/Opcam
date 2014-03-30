@@ -46,8 +46,7 @@ public class SNSShareActivity extends Activity
 		
 		IMG_share= (ImageView) findViewById(R.id.img_for_share);
 		
-		Intent intent = getIntent();//인텐트  받아오고
-		
+		Intent intent = getIntent();	//인텐트  받아오고		
 		Bundle extra= intent.getExtras();
 		mImagePath= extra.getParcelable("path");
 		
