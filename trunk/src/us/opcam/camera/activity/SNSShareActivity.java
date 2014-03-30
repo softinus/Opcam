@@ -15,18 +15,24 @@ import android.os.Bundle;
 import android.provider.MediaStore.Images;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
 import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 
 public class SNSShareActivity extends Activity
 {
-	Uri mImagePath;
-	ImageView IMG_share;
+	private Uri mImagePath;
+	private ImageView IMG_share;
+	private boolean bSharing= false;	// 공유중 상태
+	
+	private EditText EDT_share;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -40,7 +46,7 @@ public class SNSShareActivity extends Activity
 		Bundle extra= intent.getExtras();
 		mImagePath= extra.getParcelable("path");
 		
-		//Log.d("SNSShareActivity::onActivityResult", mImagePath.toString());
+		EDT_share= (EditText) findViewById(R.id.edt_for_share);
 		
 		IMG_share.setImageURI(mImagePath);
 	}
@@ -59,6 +65,12 @@ public class SNSShareActivity extends Activity
 	 */
 	public void ShareToKakaoStory(View v) throws NameNotFoundException
 	{
+		if(bSharing)	// 이미 공유중이면 안됨.
+			return;
+		
+		bSharing= true;
+		v.setEnabled(false);
+		
 		StoryLink storyLink = StoryLink.getLink(getApplicationContext());
 
 		// check, intent is available.
@@ -69,10 +81,20 @@ public class SNSShareActivity extends Activity
 		}
 		
 		storyLink.openStoryLinkImageApp(this, mImagePath.toString());
+		
+		bSharing= false;
+		v.setEnabled(true);
 	}
 	
 	public void ShareToFacebook(View v) throws NameNotFoundException
 	{	
+		if(bSharing)	// 이미 공유중이면 안됨.
+			return;
+		
+		bSharing= true;
+		v.setEnabled(false);
+		
+		
 		// start Facebook Login
 	    Session.openActiveSession(this, true, new Session.StatusCallback()
 	    { // callback when session changes state
@@ -85,7 +107,10 @@ public class SNSShareActivity extends Activity
 	          postData();
 	        }
 	      }
-	    });	
+	    });
+	    
+	    bSharing= false;
+	    v.setEnabled(true);
 	}
 	
 	
@@ -95,7 +120,7 @@ public class SNSShareActivity extends Activity
 	 */
 	private void postData()
 	{
-		alert(mImagePath.toString());
+		//alert(mImagePath.toString());
 		
 	    Session session = Session.getActiveSession();
 	    if (session != null)
@@ -114,8 +139,28 @@ public class SNSShareActivity extends Activity
 			}
 
 
-	        Request.Callback callback = new Request.Callback() {
+//	        Request.Callback callback = new Request.Callback() {
+//
+//	            public void onCompleted(Response response)
+//	            {
+//	                FacebookRequestError error = response.getError();
+//	                if (error != null)
+//	                {
+//	                	alert(error.toString());
+//	                } else {
+//	                	alert("Upload complete!");
+//	                }
+//	            }
+//	        };
+	        
+	        Bundle params = new Bundle();
+	        params.putParcelable("picture", image);
+	        params.putString("message", EDT_share.getText().toString());
+	        //params.putString("place", "1235456498726"); // place id of the image
 
+	        Request request = new Request(session, "me/photos", params, HttpMethod.POST, new Request.Callback()
+	        {
+	            @Override    
 	            public void onCompleted(Response response)
 	            {
 	                FacebookRequestError error = response.getError();
@@ -126,13 +171,13 @@ public class SNSShareActivity extends Activity
 	                	alert("Upload complete!");
 	                }
 	            }
-	        };
+	        });
 
-	        //Request request = new Request(Session.getActiveSession(), "me/feed", postParams, HttpMethod.POST, callback);
-	        //RequestAsyncTask task = new RequestAsyncTask(request);
-	        //task.execute();
-	        Request request= Request.newUploadPhotoRequest(session, image, callback);
-	        request.executeAsync();
+	        RequestAsyncTask task = new RequestAsyncTask(request);
+	        task.execute();
+
+//	        Request request= Request.newUploadPhotoRequest(session, image, callback);
+//	        request.executeAsync();
 	    }
 	}
 
