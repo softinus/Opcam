@@ -1,18 +1,28 @@
 package us.opcam.camera.activity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import com.aviary.android.feather.FeatherActivity;
+import com.aviary.android.feather.library.Constants;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 import us.opcam.camera.R;
 import us.opcam.camera.view.SystemUiHider;
+import android.R.mipmap;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore.Images;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -55,6 +65,7 @@ public class ImageZoomActivity extends Activity implements OnClickListener
 	private SystemUiHider mSystemUiHider;	
 	private PhotoViewAttacher mAttacher;
 	private String mCurrFilePath= "";
+	ImageView mContentImageView= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -73,11 +84,11 @@ public class ImageZoomActivity extends Activity implements OnClickListener
 		
 		setTitle(mCurrFilePath);
 		
-		ImageView contentImageView= (ImageView) contentView;
-		contentImageView.setImageURI(imageUri);
+		mContentImageView= (ImageView) contentView;
+		mContentImageView.setImageURI(imageUri);
 		
 	    // Attach a PhotoViewAttacher, which takes care of all of the zooming functionality.
-	    mAttacher = new PhotoViewAttacher(contentImageView);
+	    mAttacher = new PhotoViewAttacher(mContentImageView);
 		
 
 		// Set up an instance of SystemUiHider to control the system UI for
@@ -145,10 +156,10 @@ public class ImageZoomActivity extends Activity implements OnClickListener
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
 		findViewById(R.id.btn_effect).setOnTouchListener(mDelayHideTouchListener);
-		findViewById(R.id.btn_delete).setOnTouchListener(mDelayHideTouchListener);
+		findViewById(R.id.btn_share).setOnTouchListener(mDelayHideTouchListener);
 		
 		findViewById(R.id.btn_effect).setOnClickListener(this);
-		findViewById(R.id.btn_delete).setOnClickListener(this);
+		findViewById(R.id.btn_share).setOnClickListener(this);
 	}
 	
 	
@@ -186,11 +197,12 @@ public class ImageZoomActivity extends Activity implements OnClickListener
 	{
 		if(v.getId() == R.id.btn_effect)
 		{
-			alert("Effect button");
+			//alert("Effect button");
+			GotoAviary(Uri.parse(mCurrFilePath));
 		}
-		else if(v.getId() == R.id.btn_delete)
-		{
-			alert("Delete button");
+//		else if(v.getId() == R.id.btn_delete)
+//		{
+//			alert("Delete button");
 //			File file = new File(mCurrFilePath);
 //			boolean deleted = file.delete();
 //			
@@ -204,16 +216,38 @@ public class ImageZoomActivity extends Activity implements OnClickListener
 //				alert("Delete failed.");
 //				finish();
 //			}
-		}	
+//		}	
+		else if(v.getId() == R.id.btn_share)
+		{
+			GotoShareActivity(Uri.parse(mCurrFilePath));
+		}
 	}
 	
 	Handler mHideHandler = new Handler();
-	Runnable mHideRunnable = new Runnable() {
+	Runnable mHideRunnable = new Runnable()
+	{
 		@Override
-		public void run() {
+		public void run()
+		{
 			mSystemUiHider.hide();
 		}
 	};
+	
+	private void GotoShareActivity(Uri mImageUri)
+	{
+		Intent shareIntent = new Intent( this, SNSShareActivity.class );
+		shareIntent.putExtra("path", mImageUri);
+		startActivity(shareIntent);
+	}
+	
+	// 해당 Uri를 Aviary로 전송함.
+	private void GotoAviary(Uri uPath)
+	{
+		Intent newIntent = new Intent( this, FeatherActivity.class );
+		newIntent.setData( uPath );
+		newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
+		startActivityForResult( newIntent, 1 );
+	}
 
 	/**
 	 * Schedules a call to hide() in [delay] milliseconds, canceling any
@@ -224,6 +258,60 @@ public class ImageZoomActivity extends Activity implements OnClickListener
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
+	
+	
+	
+	// from Aviary
+	@Override
+	public void onActivityResult( int requestCode, int resultCode, Intent data )
+	{
+	    if( resultCode == RESULT_OK )
+	    {
+	        switch( requestCode ) 
+	        {
+	            case 1:
+	                // output image path
+	                Uri uri = data.getData();
+	                Bundle extra = data.getExtras();
+	                    if( null != extra ) 
+	                    {
+	                        // image has been changed by the user?
+	                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
+	                      
+	                        if(changed)	// 변화가 있으면...
+	                        {
+	                        	OverwriteBitmap(uri);
+	                        	mContentImageView.setImageURI(uri);
+	                        }
+	                    }
+	                break;
+	        }
+	    }
+	}
+	
+	private void OverwriteBitmap(Uri modifyPhoto)
+	{
+    	try
+    	{
+			Bitmap bmpModify= Images.Media.getBitmap(getContentResolver(), modifyPhoto);	// Aviary에서 변화된 사진
+			File pCurrentFile= new File(mCurrFilePath);	// 현재 사진.
+			
+    		FileOutputStream fos = new FileOutputStream(pCurrentFile);
+    		bmpModify.compress(CompressFormat.JPEG, 90, fos);
+
+    		fos.close();
+    		bmpModify.recycle();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch(Exception e) {
+    		e.printStackTrace();
+		}
+	}
+
+	
 	
 	private void alert(String message)
 	{
