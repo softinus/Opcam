@@ -11,13 +11,23 @@ public class ImageItem
 	private Bitmap image;
 	private String title;
 	private String uri;
+	private String uri4Share;
 
-	public ImageItem(Bitmap image, String title, String uri)
+	public String getUri4Share() {
+		return uri4Share;
+	}
+
+	public void setUri4Share(String uri4Share) {
+		this.uri4Share = uri4Share;
+	}
+
+	public ImageItem(Bitmap image, String title, String uri, String uri2)
 	{
 		super();
 		this.image = image;
 		this.title = title;
 		this.uri= uri;
+		this.uri4Share= uri2;
 	}
 
 	public Bitmap getImage() {

@@ -57,12 +57,20 @@
                 android:text="Effect"/>
             
             <Button
-                android:id="@+id/btn_delete"
+                android:id="@+id/btn_share"
                 style="?buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="Delete" />
+                android:text="Share" />
+            
+<!--             <Button -->
+<!--                 android:id="@+id/btn_delete" -->
+<!--                 style="?buttonBarButtonStyle" -->
+<!--                 android:layout_width="0dp" -->
+<!--                 android:layout_height="wrap_content" -->
+<!--                 android:layout_weight="0.33" -->
+<!--                 android:text="Delete" /> -->
             
         </LinearLayout>
     </FrameLayout>

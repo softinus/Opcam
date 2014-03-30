@@ -1,7 +1,12 @@
 package us.opcam.camera.activity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import com.aviary.android.feather.library.Constants;
 
 import us.opcam.camera.R;
 import us.opcam.camera.util.ImageItem;
@@ -10,8 +15,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore.Images;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -42,7 +50,7 @@ public class GalleryActivity extends Activity
 		{
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 			{
-				String currUri= arrImages.get(position).getUri();
+				String currUri= arrImages.get(position).getUri4Share();
 				
                 Intent intent = new Intent(getApplicationContext(), ImageZoomActivity.class);
                 intent.putExtra("uri", currUri);
@@ -70,18 +78,26 @@ public class GalleryActivity extends Activity
 		
 		for(String name : fileNames)
 		{
-			String strURI= "/sdcard/opcam/" + name;	// 이름 만듦
+			File file=new File(Environment.getExternalStorageDirectory(),"/opcam/"+name);
+			
+			Uri strURI2= Uri.fromFile(file);
+			
+			String strPath1= "/sdcard/opcam/" + name;	// 출력용 경로
+			String strPath2= strURI2.toString();	// 공유용 경로
+			
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inSampleSize = 8;
-			Bitmap bmp = BitmapFactory.decodeFile(strURI, options);
+			Bitmap bmp = BitmapFactory.decodeFile(strPath1, options);
 			
 			if(bmp == null)
-					toast("abnormal path. [" + strURI +"]");
+					toast("abnormal path. [" + strPath1 +"]");
 			else
-				imageItems.add(new ImageItem(bmp, name, strURI));
+				imageItems.add(new ImageItem(bmp, name, strPath1, strPath2));
 		}
 		return imageItems;	
 	}
+	
+
 	
 	public void toast(String msg)
     {
