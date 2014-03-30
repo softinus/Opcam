@@ -7,6 +7,7 @@ import us.opcam.camera.R;
 import us.opcam.camera.util.ImageItem;
 import us.opcam.camera.view.GridViewAdapter;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class GalleryActivity extends Activity
 	private GridView gridView;
 	private GridViewAdapter customGridAdapter;
 	
+	ArrayList<ImageItem> arrImages= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -30,16 +32,21 @@ public class GalleryActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gallery);
 		
-		gridView = (GridView) findViewById(R.id.gridView);
-		customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, getData());
+		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
+		
+		gridView = (GridView) findViewById(R.id.grid_view);
+		customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, arrImages);
 		gridView.setAdapter(customGridAdapter);
 
 		gridView.setOnItemClickListener(new OnItemClickListener()
 		{
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 			{
-				Toast.makeText(GalleryActivity.this, position + "#Selected",
-						Toast.LENGTH_SHORT).show();
+				String currUri= arrImages.get(position).getUri();
+				
+                Intent intent = new Intent(getApplicationContext(), ImageZoomActivity.class);
+                intent.putExtra("uri", currUri);
+                startActivity(intent);
 			}
 
 		});
@@ -71,7 +78,7 @@ public class GalleryActivity extends Activity
 			if(bmp == null)
 					toast("abnormal path. [" + strURI +"]");
 			else
-				imageItems.add(new ImageItem(bmp, name));
+				imageItems.add(new ImageItem(bmp, name, strURI));
 		}
 		return imageItems;	
 	}

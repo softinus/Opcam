@@ -68,7 +68,8 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem>
 	@Override
 	public ImageItem getItem(int position)
 	{
-		return null;
+		return data.get(position);
+		//return null;
 	}
 
 	@Override

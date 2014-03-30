@@ -6,14 +6,18 @@ import android.graphics.Bitmap;
  * @author javatechig {@link http://javatechig.com}
  * 
  */
-public class ImageItem {
+public class ImageItem
+{
 	private Bitmap image;
 	private String title;
+	private String uri;
 
-	public ImageItem(Bitmap image, String title) {
+	public ImageItem(Bitmap image, String title, String uri)
+	{
 		super();
 		this.image = image;
 		this.title = title;
+		this.uri= uri;
 	}
 
 	public Bitmap getImage() {
@@ -30,5 +34,13 @@ public class ImageItem {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getUri() {
+		return uri;
+	}
+
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 }
