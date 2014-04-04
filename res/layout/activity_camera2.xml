@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    >
+		
+		<LinearLayout
+		android:id="@+id/camera_layout"
+	    android:orientation="vertical"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:weightSum="1"
+	    android:background="#000000">       			
+<!-- 	    여기 안에 카메라를 동적으로 삽입하자. -->
+		</LinearLayout>
+
+    	<LinearLayout
+		android:id="@+id/cover_layout"
+	    android:orientation="vertical"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:weightSum="1"
+	    android:background="#55000000">       			
+<!-- 	    여기 안에 카메라를 가릴 것들. -->
+		</LinearLayout>
+		<Button
+		    android:id="@+id/btn_click"
+		    android:layout_gravity="center"
+		    android:layout_width="54.66dp"
+        	android:layout_height="55.33dp"
+        	android:background="@drawable/btn_camera_normal"
+		    />
+		
+		<Button
+		    android:id="@+id/btn_setting"
+		    android:layout_gravity="bottom|left"
+		    android:layout_width="34dp"
+        	android:layout_height="34dp"
+        	android:background="@drawable/btn_setting"
+        	android:layout_margin="10dp"
+		    />
+		
+		<Button
+		    android:id="@+id/btn_gallery"
+		    android:layout_gravity="bottom|right"
+		    android:layout_width="34dp"
+        	android:layout_height="34dp"
+        	android:background="@drawable/btn_gallery"
+        	android:layout_margin="10dp"
+		    />
+		
+		
+		
+
+
+
+</FrameLayout>

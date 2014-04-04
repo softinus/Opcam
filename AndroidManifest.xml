@@ -12,7 +12,7 @@
             android:value="7c77fe1ad9f85a30" />
 
         <activity
-            android:name="us.opcam.camera.activity.CameraPreview"
+            android:name="us.opcam.camera.activity.CameraPreview2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
