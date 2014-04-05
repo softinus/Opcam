@@ -90,7 +90,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		        mBitmap1 = BitmapFactory.decodeByteArray(data, 0, data.length);
 				
 				// 비트맵 리샘플링, 로테이트 후 다시 적용.
-		        mBitmap1= ImageComposeMatrixDevide2(mBitmap1, 90, 1135,1000, true);
+		        mBitmap1= ImageComposeMatrixDevide2(mBitmap1, 90, 1000,1580, true);
 		        //mBitmap1= ImageComposeMatrix(mBitmap1, true, 2, 90);		
 				mImgPreview1.setImageBitmap(mBitmap1);
 				//mImgPreview1.setScaleType(ImageView.ScaleType.CENTER); 
@@ -131,7 +131,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		        mBitmap2 = BitmapFactory.decodeByteArray(data, 0, data.length);
 				
 				// 비트맵 리샘플링, 로테이트 후 다시 적용.
-		        mBitmap2= ImageComposeMatrixDevide2(mBitmap2, -90, 1135,1000, false);	
+		        mBitmap2= ImageComposeMatrixDevide2(mBitmap2, -90, 1000,1580, false);	
 				mImgPreview2.setImageBitmap(mBitmap2); 
 				mImgPreview2.setBackgroundColor(Color.BLACK);
 				
@@ -495,8 +495,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		 
 		
 		// calculate the scale 
-		float scaleWidth = ((float) nWid) / width; 
-		float scaleHeight = ((float) nHei) / height;     		 
+		float scaleWidth = ((float) nWid) / width2; 
+		float scaleHeight = ((float) nHei) / height2;     		 
 
 		// resize the bit map 
 		matrix_Scale.postScale(scaleWidth, scaleHeight); 
