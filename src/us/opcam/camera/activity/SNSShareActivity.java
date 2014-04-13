@@ -7,33 +7,83 @@ import us.opcam.camera.R;
 import us.opcam.camera.util.StoryLink;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.Images;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-import com.facebook.FacebookRequestError;
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.RequestAsyncTask;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
+import com.sromku.simple.fb.Permission;
+import com.sromku.simple.fb.SimpleFacebook;
+import com.sromku.simple.fb.entities.Photo;
+import com.sromku.simple.fb.entities.Privacy;
+import com.sromku.simple.fb.entities.Privacy.PrivacySettings;
+import com.sromku.simple.fb.listeners.OnLoginListener;
+import com.sromku.simple.fb.listeners.OnPublishListener;
 
 public class SNSShareActivity extends Activity
 {
+	protected static final String TAG = SNSShareActivity.class.getName();
+	
 	private Uri mImagePath;
 	private ImageView IMG_share;
 	private boolean bSharing= false;	// 공유중 상태
 	
-	private EditText EDT_share;
+	private EditText EDT_share;	
 	
+	private SimpleFacebook mSimpleFacebook;
+	private ProgressDialog mProgress;
+	
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();		
+		mSimpleFacebook = SimpleFacebook.getInstance(this);
+	}
+	
+	// Login listener
+	private OnLoginListener mOnLoginListener = new OnLoginListener() {
+
+		@Override
+		public void onFail(String reason)
+		{
+			alert("Failed to login");
+			Log.w(TAG, "Failed to login");
+		}
+
+		@Override
+		public void onException(Throwable throwable)
+		{
+			alert("Exception: " + throwable.getMessage());
+			Log.e(TAG, "Bad thing happened", throwable);
+		}
+
+		@Override
+		public void onThinking()
+		{
+		}
+
+		@Override
+		public void onLogin() {
+			//alert("You are logged in");
+			postData();
+		}
+
+		@Override
+		public void onNotAcceptingPermissions(Permission.Type type) {
+			alert(String.format("You didn't accept %s permissions", type.name()));
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -95,19 +145,9 @@ public class SNSShareActivity extends Activity
 		v.setEnabled(false);
 		
 		
-		// start Facebook Login
-	    Session.openActiveSession(this, true, new Session.StatusCallback()
-	    { // callback when session changes state
-	    @SuppressWarnings("deprecation")
-		@Override
-	    public void call(Session session, SessionState state, Exception exception)
-	    {
-	        if (session.isOpened())
-	        {
-	          postData();
-	        }
-	      }
-	    });
+		mSimpleFacebook.login(mOnLoginListener);
+		
+		
 	    
 	    bSharing= false;
 	    v.setEnabled(true);
@@ -120,80 +160,86 @@ public class SNSShareActivity extends Activity
 	 */
 	private void postData()
 	{
-		//alert(mImagePath.toString());
+		// take screenshot
+		Bitmap bitmap = null;
+		try {
+			bitmap = Images.Media.getBitmap(getContentResolver(), mImagePath);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// set privacy
+		Privacy privacy = new Privacy.Builder()
+				.setPrivacySettings(PrivacySettings.SELF)
+				.build();
 		
-	    Session session = Session.getActiveSession();
-	    if (session != null)
-	    {
-	    	Bitmap image= null;
-			try {
-				image = Images.Media.getBitmap(getContentResolver(), mImagePath);
-			}
-			catch (FileNotFoundException e)
+		
+		// create Photo instance and add some properties
+		Photo photo = new Photo.Builder()
+				.setImage(bitmap)
+				.setName(EDT_share.getText().toString())
+				.setPrivacy(privacy)
+				.build();
+
+		// publish
+		mSimpleFacebook.publish(photo, new OnPublishListener()
+		{
+			@Override
+			public void onFail(String reason)
 			{
-				alert(e.toString());
+				hideDialog();
+				Log.w(TAG, "Failed to publish");
+				alert("Failed to publish" + reason.toString());
 			}
-			catch (IOException e)
+
+			@Override
+			public void onException(Throwable throwable)
 			{
-				alert(e.toString());
+				hideDialog();
+				Log.e(TAG, "Bad thing happened", throwable);
+				alert("Bad thing happened" + throwable.toString());
 			}
 
+			@Override
+			public void onThinking()
+			{
+				showDialog();
+			}
 
-//	        Request.Callback callback = new Request.Callback() {
-//
-//	            public void onCompleted(Response response)
-//	            {
-//	                FacebookRequestError error = response.getError();
-//	                if (error != null)
-//	                {
-//	                	alert(error.toString());
-//	                } else {
-//	                	alert("Upload complete!");
-//	                }
-//	            }
-//	        };
-	        
-	        Bundle params = new Bundle();
-	        params.putParcelable("picture", image);
-	        params.putString("message", EDT_share.getText().toString());
-	        //params.putString("place", "1235456498726"); // place id of the image
-
-	        Request request = new Request(session, "me/photos", params, HttpMethod.POST, new Request.Callback()
-	        {
-	            @Override    
-	            public void onCompleted(Response response)
-	            {
-	                FacebookRequestError error = response.getError();
-	                if (error != null)
-	                {
-	                	alert(error.toString());
-	                } else {
-	                	alert("Upload complete!");
-	                }
-	            }
-	        });
-
-	        RequestAsyncTask task = new RequestAsyncTask(request);
-	        task.execute();
-
-//	        Request request= Request.newUploadPhotoRequest(session, image, callback);
-//	        request.executeAsync();
-	    }
+			@Override
+			public void onComplete(String id)
+			{
+				hideDialog();
+				//alert("Published successfully. The new image id = " + id);
+				alert("Published successfully.");
+			}
+		});
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		super.onActivityResult(requestCode, resultCode, data);
-		
-//		Bundle extra= data.getExtras();
-//		Uri imgPath= extra.getParcelable("path");
-//		
-//		Log.d("SNSShareActivity::onActivityResult", imgPath.toString());
-//		
-//		IMG_share.setImageURI(imgPath);
-		
-		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+		mSimpleFacebook.onActivityResult(this, requestCode, resultCode, data); 
+	    super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	
+	private void toast(String message) {
+		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+	}
+	
+	private void showDialog() {
+		mProgress = ProgressDialog.show(this, "Uploading...", "Waiting for Facebook", true);
+	}
+
+	private void hideDialog() {
+		if (mProgress != null) {
+			mProgress.hide();
+		}
 	}
 	
 	private void alert(String message)
