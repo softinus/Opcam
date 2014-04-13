@@ -113,27 +113,31 @@ public class SNSShareActivity extends Activity
 	 * share to kakaostory
 	 * @param strImgPath
 	 */
-	public void ShareToKakaoStory(View v) throws NameNotFoundException
+	public void ShareToKakao(View v) throws NameNotFoundException
 	{
 		if(bSharing)	// 이미 공유중이면 안됨.
 			return;
 		
 		bSharing= true;
-		v.setEnabled(false);
 		
-		StoryLink storyLink = StoryLink.getLink(getApplicationContext());
-
-		// check, intent is available.
-		if (!storyLink.isAvailableIntent())
-		{
-			alert("Not installed KakaoStory.");
-			return;
-		}
+		// Image를 전송할 때 
+		Intent intent = new Intent(Intent.ACTION_SEND); 
+		intent.setType("image/png"); 
+		intent.putExtra(Intent.EXTRA_STREAM, mImagePath); 
+		intent.setPackage("com.kakao.talk");
+		startActivity(intent);
 		
-		storyLink.openStoryLinkImageApp(this, mImagePath.toString());
+//		StoryLink storyLink = StoryLink.getLink(getApplicationContext());
+//
+//		// check, intent is available.
+//		if (!storyLink.isAvailableIntent())
+//		{
+//			alert("Not installed KakaoStory.");
+//			return;
+//		}		
+//		storyLink.openStoryLinkImageApp(this, mImagePath.toString());
 		
 		bSharing= false;
-		v.setEnabled(true);
 	}
 	
 	public void ShareToFacebook(View v) throws NameNotFoundException
@@ -142,15 +146,8 @@ public class SNSShareActivity extends Activity
 			return;
 		
 		bSharing= true;
-		v.setEnabled(false);
-		
-		
 		mSimpleFacebook.login(mOnLoginListener);
-		
-		
-	    
 	    bSharing= false;
-	    v.setEnabled(true);
 	}
 	
 	
