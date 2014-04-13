@@ -27,6 +27,7 @@ import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -65,6 +66,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	private boolean bSkipShare= false;
 	
 	private Uri uCurrentPhoto= null;
+	
+	SharedPreferences prefs= null;	// shared preference
     
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -72,6 +75,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
         super.onCreate(savedInstanceState);
         
         mContext= this.getApplicationContext();
+        prefs= PreferenceManager.getDefaultSharedPreferences(mContext);
         
         
         mPicture1= new PictureCallback()
@@ -137,28 +141,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
 				
 				mImgPreview2.setVisibility(View.VISIBLE);
 				
-//				// 앞 카메라 메모리를 제거한다.
-//				mCView2.ReleaseCamera();
-//				//mLayout.removeAllViews();
-//				mCameraLayout.removeView(mCView2);
-//				
-//				// 이미지를 세팅한다.
-//				mImgPreview2.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
-//				mBitmap2= BitmapFactory.decodeByteArray(data, 0, data.length);
-//				
-//				// 비트맵 리샘플링, 로테이트 후 다시 적용.
-//				//mBitmap2= ImageComposeMatrix(mBitmap2, 780, 1000, -90);
-//				mBitmap2= ImageComposeMatrixDevide2(mBitmap2, -90, false);
-//				mImgPreview2.setImageBitmap(mBitmap2);
-//				mImgPreview2.setBackgroundColor(Color.BLACK);
-//				//mImgPreview2.setScaleType(ImageView.ScaleType.CENTER);
-//		        mCameraLayout.addView(mImgPreview2);
-		        
-		        
-		        
 				ShutButton.setEnabled(false);
 				
-				SharedPreferences prefs =getSharedPreferences("test", MODE_PRIVATE);
 	            bSkipEffect= prefs.getBoolean("process_skip_effect_step", false); // 키값, 디폴트값
 	            bSkipShare= prefs.getBoolean("process_skip_share_step", false); // 키값, 디폴트값
 	            
@@ -166,7 +150,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	            
 	            if(bSkipEffect)	// effect 생략하면
 	            {
-	            	if(bSkipShare)	// share 생략하면
+	            	if(!bSkipShare)	// share 생략하면
 	            	{
 	            		GotoShareActivity(uCurrentPhoto, null);
 	            	}
@@ -185,10 +169,6 @@ public class CameraPreview2 extends Activity implements OnClickListener
         
         // Hide the window title.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-    
-        // Create our Preview view and set it as the content of our activity.
-        //mCView = new CameraView(this);
-        //setContentView(mCView);
         
         setContentView(R.layout.activity_camera2);
         mCoverLayout = (LinearLayout) findViewById(R.id.cover_layout);	// 위 커버
@@ -241,22 +221,6 @@ public class CameraPreview2 extends Activity implements OnClickListener
 
 	private void RefreshAllView()
 	{
-		// 레이아웃 삭제.
-//		mCameraLayout.removeAllViews();
-//		
-//		mCView1= new CameraView(this, false);
-//		mCView1.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));        
-//		mCameraLayout.addView(mCView1);
-//		
-//		mImgPreview2= new ImageView(this);
-//		mCView1.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
-//		mImgPreview2.setBackgroundColor(Color.BLACK);
-//		mCameraLayout.addView(mImgPreview2);
-//		
-//		ShutButton.setText("");
-//		ShutButton.setTag("YOU");
-//		ShutButton.setEnabled(true);
-		
 		mCameraLayout.removeAllViews();
 		mCoverLayout.removeAllViews();
 		
@@ -551,8 +515,23 @@ public class CameraPreview2 extends Activity implements OnClickListener
 
     	try
     	{
+    		int nResolution= prefs.getInt("option_resolutions_list_titles", 1);
     		FileOutputStream fos = new FileOutputStream(file);
-    		bitmap.compress(CompressFormat.JPEG, 80, fos);
+    		
+    		int nQuality= 85;
+    		switch(nResolution)
+    		{
+    		case 0:
+    			nQuality= 70;
+    			break;
+    		case 1:
+    			nQuality= 85;
+    			break;
+    		case 2:
+    			nQuality= 100;
+    			break;    			
+    		}
+    		bitmap.compress(CompressFormat.JPEG, nQuality, fos);
 
     		fos.close();
     		bitmap.recycle();
