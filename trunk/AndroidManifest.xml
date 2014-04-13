@@ -5,6 +5,8 @@
     android:versionName="1.0" >
 
     <application
+        android:name="us.opcam.camera.activity.OpcamApp"
+        android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
         <meta-data
