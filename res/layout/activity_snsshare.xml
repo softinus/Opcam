@@ -30,22 +30,22 @@
 
 
     <Button
-        android:id="@+id/btn_share_kakaostory"
+        android:id="@+id/btn_share_kakao"
         android:layout_below="@+id/edt_for_share"
         android:layout_marginTop="10dip"
         android:padding="10dp"
         android:layout_centerHorizontal="true"  
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Share to Kakaostory"
+        android:text="Share to Kakao"
         android:layout_marginLeft="15dp"
    		android:layout_marginRight="15dp"
-   		android:onClick="ShareToKakaoStory">
+   		android:onClick="ShareToKakao">
     </Button>
     
     <Button
         android:id="@+id/btn_share_facebook"
-        android:layout_below="@+id/btn_share_kakaostory"
+        android:layout_below="@+id/btn_share_kakao"
         android:layout_marginTop="10dip"
         android:padding="10dp"
         android:layout_centerHorizontal="true"  
