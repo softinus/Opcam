@@ -148,11 +148,15 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	            
 	            uCurrentPhoto= SaveBitmapFile();
 	            
-	            if(bSkipEffect)	// effect 생략하면
+	            if(bSkipEffect)	// effect 생략,
 	            {
 	            	if(!bSkipShare)	// share 생략하면
 	            	{
 	            		GotoShareActivity(uCurrentPhoto, null);
+	            	}
+	            	else
+	            	{
+	            		GotoAviary(uCurrentPhoto);
 	            	}
 	            }
 	            else
@@ -343,7 +347,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	                      
 	                        OverwriteBitmap(mImageUri);
 	                        
-	                        if(!bSkipShare)
+	                        if(!bSkipShare)	// share를 스킵하지 않으면
 	                        	GotoShareActivity(uCurrentPhoto, extra);
 	                    }
 	                break;

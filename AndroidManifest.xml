@@ -109,6 +109,8 @@
             android:label="@string/title_activity_image_zoom"
             android:theme="@style/FullscreenTheme" >
         </activity>
+        
+        <activity android:name="us.opcam.camera.activity.ImageZoomPagerActivity" />
     </application>
 
     <uses-sdk
