@@ -1,39 +1,49 @@
 package us.opcam.camera.activity;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import us.opcam.camera.R;
 import us.opcam.camera.view.HackyViewPager;
 import us.opcam.camera.view.PhotoPagerAdapter;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.aviary.android.feather.FeatherActivity;
+import com.aviary.android.feather.library.Constants;
+
 public class ImageZoomPagerActivity extends Activity
 {
+	ArrayList<Uri> data= null;
+	ViewPager mViewPager= null;
+	int mCurrPos= 0;
+	
+	PhotoPagerAdapter mAdapter= null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_image_zoom2);
-        ViewPager mViewPager = (HackyViewPager) findViewById(R.id.view_pager);
+        mViewPager = (HackyViewPager) findViewById(R.id.view_pager);
 		setContentView(mViewPager);
 				
 		Intent intent = getIntent();	//인텐트  받아오고		
 		Bundle extra= intent.getExtras();
-		ArrayList<Uri> data= extra.getParcelableArrayList("uri_list");
-		int pos= extra.getInt("selected_position");
+		
+		data= extra.getParcelableArrayList("uri_list");
+		mCurrPos= extra.getInt("selected_position");
 
-		mViewPager.setAdapter(new PhotoPagerAdapter(this, data));
-		mViewPager.setCurrentItem(pos);
+		mAdapter= new PhotoPagerAdapter(this, data);
+		mViewPager.setAdapter(mAdapter);
+		mViewPager.setCurrentItem(mCurrPos);
 	}
 
 	@Override
@@ -58,18 +68,62 @@ public class ImageZoomPagerActivity extends Activity
 			break;
 
 		case R.id.actionbar_delete:
-			break;
+		{
+			int nForDeletePos= mViewPager.getCurrentItem();
+			String strURIpath= mAdapter.data.get(nForDeletePos).toString();
+			int pos= strURIpath.lastIndexOf("/");
+			String strFileName= strURIpath.substring(pos, strURIpath.length());
+			String strNewFilePath= "/sdcard/opcam" + strFileName;
+			
+			new File( strNewFilePath ).delete();	// 파일 지우고
+
+			if (nForDeletePos == mViewPager.getCurrentItem())
+			{
+                if(nForDeletePos == (data.size()-1)) {
+                	mViewPager.setCurrentItem(nForDeletePos-1);
+                } else if (nForDeletePos == 0){
+                	mViewPager.setCurrentItem(1);
+                }
+            }
+			mViewPager.removeViewAt(nForDeletePos);
+			mAdapter.data.remove(nForDeletePos);	// 뷰 지움.
+			mAdapter.notifyDataSetChanged();
+			
+			if( mAdapter.data.isEmpty() )
+				finish();
+		}			
+		break;
 
 		case R.id.actionbar_edit:
+			GotoAviary();
 			break;
 			
 		case R.id.actionbar_share:
+			GotoShareActivity();
 			break;
 
 		default:
 			return false;
 		}
 		return true;
+	}
+	
+	
+	// 해당 Uri를 Aviary로 전송함.
+	private void GotoAviary()
+	{
+		Intent newIntent = new Intent( this, FeatherActivity.class );
+		newIntent.setData( data.get(mViewPager.getCurrentItem()) );
+		newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
+		startActivityForResult( newIntent, 1 );
+	}
+
+	private void GotoShareActivity()
+	{
+		Intent shareIntent = new Intent( this, SNSShareActivity.class );
+		//shareIntent.putExtra("contants", null);
+		shareIntent.putExtra("path", data.get(mViewPager.getCurrentItem()));
+		startActivity(shareIntent);
 	}
 
 }

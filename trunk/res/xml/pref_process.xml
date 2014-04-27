@@ -3,11 +3,13 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="process_skip_effect_step"
+        android:enabled="false"
         android:title="@string/pref_process_skip_effect_step" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="process_skip_share_step"
+        android:enabled="false"
         android:title="@string/pref_process_skip_share_step" />
         
     <CheckBoxPreference

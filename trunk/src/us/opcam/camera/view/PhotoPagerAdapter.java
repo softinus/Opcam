@@ -17,7 +17,7 @@ import android.view.ViewGroup.LayoutParams;
 
 public class PhotoPagerAdapter extends PagerAdapter
 {
-	ArrayList<Uri> data = new ArrayList<Uri>();
+	public ArrayList<Uri> data = new ArrayList<Uri>();
 	Context mContext= null;
 	
 	public PhotoPagerAdapter(Context _context, ArrayList<Uri> _data)
