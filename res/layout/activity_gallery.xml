@@ -31,7 +31,8 @@
     android:gravity="center"
     android:stretchMode="columnWidth"
     android:focusable="false"
-	android:focusableInTouchMode="false">  
+	android:focusableInTouchMode="false"
+	android:background="#111">  
  
 </GridView>
 

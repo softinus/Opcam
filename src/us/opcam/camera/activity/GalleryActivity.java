@@ -35,6 +35,16 @@ public class GalleryActivity extends Activity
 		setContentView(R.layout.activity_gallery);
 		
 		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
+		
+		// 데이터가 아무것도 없으면
+		if(arrImages == null || arrImages.isEmpty()) 
+		{
+			toast("No pictures on opcam folder");
+			finish();
+			return;
+		}
+		
+		
 		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
 		
 		gridView = (GridView) findViewById(R.id.grid_view);
@@ -52,7 +62,7 @@ public class GalleryActivity extends Activity
 				Intent intent = new Intent(getApplicationContext(), ImageZoomPagerActivity.class);
                 intent.putParcelableArrayListExtra("uri_list", getParcelData());
                 intent.putExtra("selected_position", position);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
 			}
 
 		});
@@ -77,12 +87,43 @@ public class GalleryActivity extends Activity
 		return arrRes;
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if(requestCode != 0)
+			return;
+		
+		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
+		
+		// 데이터가 아무것도 없으면
+		if(arrImages == null || arrImages.isEmpty())
+		{
+			toast("No pictures on opcam folder");
+			finish();
+			return;
+		}
+		
+		
+		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
+		
+		gridView = (GridView) findViewById(R.id.grid_view);
+		customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, arrImages);
+		gridView.setAdapter(customGridAdapter);
+		
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	// 해당 폴더 안에 있는 각 이미지를 가져온다.
 	private ArrayList<ImageItem> getData()
 	{
 		final ArrayList<ImageItem> imageItems = new ArrayList<ImageItem>();
+				
+		File dir=new File(Environment.getExternalStorageDirectory(), "/opcam");
 		
-		File dir=new File(Environment.getExternalStorageDirectory(), "/opcam");  
+		if(!dir.exists())
+		{
+			return null;
+		}		
 		int count= dir.list().length;   
 		String[] fileNames = dir.list();
 		
