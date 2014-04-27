@@ -53,4 +53,5 @@ public class ImageItem
 	public void setUri(String uri) {
 		this.uri = uri;
 	}
+
 }

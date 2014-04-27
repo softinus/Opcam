@@ -1,12 +1,8 @@
 package us.opcam.camera.activity;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-
-import com.aviary.android.feather.library.Constants;
+import java.util.Collections;
 
 import us.opcam.camera.R;
 import us.opcam.camera.util.ImageItem;
@@ -15,11 +11,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore.Images;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,6 +35,7 @@ public class GalleryActivity extends Activity
 		setContentView(R.layout.activity_gallery);
 		
 		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
+		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
 		
 		gridView = (GridView) findViewById(R.id.grid_view);
 		customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, arrImages);
@@ -50,10 +45,13 @@ public class GalleryActivity extends Activity
 		{
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 			{
-				String currUri= arrImages.get(position).getUri4Share();
+				//String currUri= arrImages.get(position).getUri4Share();
 				
-                Intent intent = new Intent(getApplicationContext(), ImageZoomActivity.class);
-                intent.putExtra("uri", currUri);
+                //Intent intent = new Intent(getApplicationContext(), ImageZoomActivity.class);
+				//intent.putExtra("uri", currUri);
+				Intent intent = new Intent(getApplicationContext(), ImageZoomPagerActivity.class);
+                intent.putParcelableArrayListExtra("uri_list", getParcelData());
+                intent.putExtra("selected_position", position);
                 startActivity(intent);
 			}
 
@@ -68,6 +66,18 @@ public class GalleryActivity extends Activity
 		return true;
 	}
 	
+	// 이미지 리스트 중 Uri만을 추려낸다.
+	private ArrayList<Uri> getParcelData()
+	{
+		final ArrayList<Uri> arrRes= new ArrayList<Uri>();
+		
+		for(ImageItem item : arrImages)
+			arrRes.add( Uri.parse( item.getUri4Share() ) );
+		
+		return arrRes;
+	}
+	
+	// 해당 폴더 안에 있는 각 이미지를 가져온다.
 	private ArrayList<ImageItem> getData()
 	{
 		final ArrayList<ImageItem> imageItems = new ArrayList<ImageItem>();
