@@ -331,7 +331,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 			File pCurrentFile= new File(uCurrentPhoto.getPath());
 			
     		FileOutputStream fos = new FileOutputStream(pCurrentFile);
-    		bmpModify.compress(CompressFormat.JPEG, 80, fos);
+    		bmpModify.compress(CompressFormat.JPEG, 100, fos);
 
     		fos.close();
     		bmpModify.recycle();

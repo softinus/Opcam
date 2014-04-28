@@ -36,11 +36,11 @@
         android:padding="10dp"
         android:layout_centerHorizontal="true"  
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Share to Kakao"
+        android:layout_height="wrap_content"        
         android:layout_marginLeft="15dp"
    		android:layout_marginRight="15dp"
    		android:drawableLeft="@drawable/icon_kakao"
+   		android:text="Kakaotalk"
    		android:onClick="ShareToKakao">
     </Button>
     
@@ -55,7 +55,7 @@
         android:layout_marginLeft="15dp"
    		android:layout_marginRight="15dp"
    		android:drawableLeft="@drawable/icon_facebook"
-        android:text="Share to Facebook"
+        android:text="Facebook"
         android:onClick="ShareToFacebook"
         >
     </Button>
