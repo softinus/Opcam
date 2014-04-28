@@ -1,6 +1,9 @@
 package us.opcam.camera.activity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import us.opcam.camera.R;
@@ -8,8 +11,11 @@ import us.opcam.camera.view.HackyViewPager;
 import us.opcam.camera.view.PhotoPagerAdapter;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore.Images;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,12 +49,6 @@ public class ImageZoomPagerActivity extends Activity
 		mAdapter= new PhotoPagerAdapter(this, data);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setCurrentItem(mCurrPos);
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
 	}
 
 	@Override
@@ -96,18 +96,78 @@ public class ImageZoomPagerActivity extends Activity
 		break;
 
 		case R.id.actionbar_edit:
+		{
 			GotoAviary();
-			break;
+		}
+		break;
 			
 		case R.id.actionbar_share:
+		{
 			GotoShareActivity();
-			break;
+		}
+		break;
 
 		default:
 			return false;
 		}
 		return true;
 	}
+	
+	// aviary에서 넘어올 때
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if( resultCode == RESULT_OK )
+	    {
+	        switch( requestCode ) 
+	        {
+	            case 1:
+	                // output image path
+	                Uri mImageUri = data.getData();
+	                Bundle extra = data.getExtras();
+	                
+                    if( null != extra ) 
+                    {
+                        // image has been changed by the user?
+                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
+                        
+                        if(changed)
+                        {
+                        	OverwriteBitmap(mImageUri);
+                        	
+                			mViewPager.setAdapter(null);
+                			mViewPager.setAdapter(mAdapter);	// 어댑터 리셋
+                			mViewPager.setCurrentItem(mCurrPos);
+                        }
+                    }
+	                break;
+	        }
+	    }
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	private void OverwriteBitmap(Uri modifyPhoto)
+	{
+    	try
+    	{
+			Bitmap bmpModify= Images.Media.getBitmap(getContentResolver(), modifyPhoto);
+			File pCurrentFile= new File(data.get(mCurrPos).getPath());
+			
+    		FileOutputStream fos = new FileOutputStream(pCurrentFile);
+    		bmpModify.compress(CompressFormat.JPEG, 100, fos);
+
+    		fos.close();
+    		bmpModify.recycle();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch(Exception e) {
+    		e.printStackTrace();
+		}
+	}
+	
 	
 	
 	// 해당 Uri를 Aviary로 전송함.
@@ -118,6 +178,7 @@ public class ImageZoomPagerActivity extends Activity
 		newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
 		startActivityForResult( newIntent, 1 );
 	}
+
 
 	private void GotoShareActivity()
 	{
