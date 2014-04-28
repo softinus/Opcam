@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import us.opcam.camera.R;
+import us.opcam.camera.util.SPUtil;
 import us.opcam.camera.view.CameraView;
 import android.app.Activity;
 import android.content.Context;
@@ -65,7 +66,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	
 	private Uri uCurrentPhoto= null;
 	
-	SharedPreferences prefs= null;	// shared preference
+	//SharedPreferences prefs= null;	// shared preference
     
     @Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -73,7 +74,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
         super.onCreate(savedInstanceState);
         
         mContext= this.getApplicationContext();
-        prefs= PreferenceManager.getDefaultSharedPreferences(mContext);
+        //prefs= PreferenceManager.getDefaultSharedPreferences(mContext);
         
         
         mPicture1= new PictureCallback()
@@ -141,8 +142,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
 				
 				ShutButton.setEnabled(false);
 				
-	            bSkipEffect= prefs.getBoolean("process_skip_effect_step", false); // 키값, 디폴트값
-	            bSkipShare= prefs.getBoolean("process_skip_share_step", false); // 키값, 디폴트값
+	            bSkipEffect= SPUtil.getBoolean(mContext, "process_skip_effect_step"); // 키값, 디폴트값
+	            bSkipShare= SPUtil.getBoolean(mContext, "process_skip_share_step"); // 키값, 디폴트값
 	            
 	            uCurrentPhoto= SaveBitmapFile();
 	            
@@ -276,22 +277,33 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		
 		String strSaveFileName= "opcam_"+strDate+".jpg";
 		
-		int nCount= 0;
-		while(true)	// 파일을 opcam_20140428_1.jpg 식으로 저장함.
+		int nCount= SPUtil.getInt(mContext, "count");
+		
+		if(nCount == -1)
 		{
-			++nCount;
-			String strCount= nCount+"";
-			strSaveFileName= "opcam_"+ strDate +"_"+ strCount +".jpg";
-			
-			File file= new File("sdcard/opcam/" + strSaveFileName);
-			if(!file.exists())	// 해당 파일 이름이 없으면 저장함.
-				break;
+			SPUtil.putInt(mContext, "count", 1);
+			nCount= 0;
 		}
+		++nCount;
+		SPUtil.putInt(mContext, "count", nCount);
+		strSaveFileName= "opcam_"+ nCount +"_"+ strDate +".jpg";
+		
+		
+//		while(true)	// 파일을 opcam_20140428_1.jpg 식으로 저장함.
+//		{
+//			++nCount;
+//			String strCount= nCount+"";
+//			strSaveFileName= "opcam_"+ strDate +"_"+ strCount +".jpg";
+//			
+//			File file= new File("sdcard/opcam/" + strSaveFileName);
+//			if(!file.exists())	// 해당 파일 이름이 없으면 저장함.
+//				break;
+//		}
 		
 		
 		if( CombineAndSaveImage(mBitmapCopy1, mBitmapCopy2, true, strSaveFileName) )
 		{
-			Toast.makeText(this, "Save complete.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Save file successfully.", Toast.LENGTH_SHORT).show();
 			
 			File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);			
 			uRes= Uri.fromFile(dir);
@@ -534,7 +546,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 
     	try
     	{
-    		int nResolution= Integer.parseInt( prefs.getString("option_resolutions_list_titles", "1") );
+    		int nResolution= Integer.parseInt( SPUtil.getString(mContext, "option_resolutions_list_titles", "1") );
     		FileOutputStream fos = new FileOutputStream(file);
     		
     		int nQuality= 85;
