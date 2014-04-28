@@ -1,8 +1,11 @@
 package us.opcam.camera.activity;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 
 import us.opcam.camera.R;
 import us.opcam.camera.util.ImageItem;
@@ -123,11 +126,33 @@ public class GalleryActivity extends Activity
 		if(!dir.exists())
 		{
 			return null;
-		}		
-		int count= dir.list().length;   
-		String[] fileNames = dir.list();
+		}
 		
-		for(String name : fileNames)
+		File[] fileLists= dir.listFiles(new FilenameFilter() {
+		    public boolean accept(File directory, String fileName) {
+		        return fileName.endsWith(".jpg");
+		    }
+		});
+		
+		// 파일 수정 날짜별로 소팅
+		Arrays.sort(fileLists, new Comparator<File>()
+		{
+		    public int compare(File f1, File f2)
+		    {
+		        return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+		    }
+	    });
+		
+		ArrayList<String> arrFileNames= new ArrayList<String>();
+		for(File file : fileLists)
+		{
+			int pos= file.toString().lastIndexOf("/");
+			arrFileNames.add( file.toString().substring(pos+1,file.toString().length()) );
+		}
+		
+		
+		
+		for(String name : arrFileNames)
 		{
 			File file=new File(Environment.getExternalStorageDirectory(),"/opcam/"+name);
 			
@@ -141,7 +166,7 @@ public class GalleryActivity extends Activity
 			Bitmap bmp = BitmapFactory.decodeFile(strPath1, options);
 			
 			if(bmp == null)
-					toast("abnormal path. [" + strPath1 +"]");
+				toast("abnormal path. [" + strPath1 +"]");
 			else
 				imageItems.add(new ImageItem(bmp, name, strPath1, strPath2));
 		}

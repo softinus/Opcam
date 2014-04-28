@@ -19,6 +19,7 @@ import android.provider.MediaStore.Images;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.aviary.android.feather.FeatherActivity;
 import com.aviary.android.feather.library.Constants;
@@ -68,30 +69,7 @@ public class ImageZoomPagerActivity extends Activity
 
 		case R.id.actionbar_delete:
 		{
-			int nForDeletePos= mViewPager.getCurrentItem();
-			String strURIpath= mAdapter.data.get(nForDeletePos).toString();
-			int pos= strURIpath.lastIndexOf("/");
-			String strFileName= strURIpath.substring(pos, strURIpath.length());
-			String strNewFilePath= "/sdcard/opcam" + strFileName;
-			// 경로를 URI에서 sdcard 경로로 바꿔줌.
-			
-			new File( strNewFilePath ).delete();	// 파일 지우고
-
-			mViewPager.setAdapter(null);
-			mAdapter.data.remove(nForDeletePos);
-			mViewPager.setAdapter(mAdapter);	// 어댑터 리셋
-			
-			if(nForDeletePos >= 1)
-			{
-				mViewPager.setCurrentItem(nForDeletePos-1, true);
-			}
-			else if (nForDeletePos == 0)
-			{
-				mViewPager.setCurrentItem(1, true);
-			}
-			
-			if( mAdapter.data.isEmpty() )
-				finish();
+			DeleteCurrentFile();
 		}			
 		break;
 
@@ -111,6 +89,36 @@ public class ImageZoomPagerActivity extends Activity
 			return false;
 		}
 		return true;
+	}
+
+	private void DeleteCurrentFile()
+	{
+		int nForDeletePos= mViewPager.getCurrentItem();
+		String strURIpath= mAdapter.data.get(nForDeletePos).toString();
+		int pos= strURIpath.lastIndexOf("/");
+		String strFileName= strURIpath.substring(pos, strURIpath.length());
+		String strNewFilePath= "/sdcard/opcam" + strFileName;
+		// 경로를 URI에서 sdcard 경로로 바꿔줌.
+		
+		new File( strNewFilePath ).delete();	// 파일 지우고
+
+		mViewPager.setAdapter(null);
+		mAdapter.data.remove(nForDeletePos);
+		mViewPager.setAdapter(mAdapter);	// 어댑터 리셋
+		
+		if(nForDeletePos >= 1)
+		{
+			mViewPager.setCurrentItem(nForDeletePos-1, true);
+		}
+		else if (nForDeletePos == 0)
+		{
+			mViewPager.setCurrentItem(1, true);
+		}
+		
+		if( mAdapter.data.isEmpty() )
+			finish();
+		else
+			toast("Delete file successfully.");
 	}
 	
 	// aviary에서 넘어올 때
@@ -188,4 +196,8 @@ public class ImageZoomPagerActivity extends Activity
 		startActivity(shareIntent);
 	}
 
+	
+	private void toast(String message) {
+		Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+	}
 }

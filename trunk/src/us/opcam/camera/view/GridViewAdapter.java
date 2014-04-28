@@ -58,14 +58,14 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem>
 		
 		if(tokens.length == 3)	// 형식에 맞는 파일 이름이면 토큰이 3개여야 한다.
 		{
-			String year= tokens[1].substring(0, 4);
-			String month= tokens[1].substring(4, 6);
-			String day= tokens[1].substring(6, 8);
+			String year= tokens[2].substring(0, 4);
+			String month= tokens[2].substring(4, 6);
+			String day= tokens[2].substring(6, 8);
 			
-			int extPos= tokens[2].lastIndexOf(".");
-			String numberNotIncludeExt= tokens[2].substring(0, extPos);
+//			int extPos= tokens[2].lastIndexOf(".");
+//			String numberNotIncludeExt= tokens[2].substring(0, extPos);
 			
-			holder.TXT_name.setText(tokens[0]+"_"+numberNotIncludeExt);
+			holder.TXT_name.setText(tokens[0]+"_"+tokens[1]);
 			holder.TXT_date.setText(year+"."+month+"."+day);
 		}
 		else

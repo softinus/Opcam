@@ -1,16 +1,17 @@
 package us.opcam.camera.activity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import us.opcam.camera.R;
-import us.opcam.camera.util.StoryLink;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.Images;
@@ -21,6 +22,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.entities.Photo;
@@ -109,6 +112,36 @@ public class SNSShareActivity extends Activity
 		return true;
 	}
 	
+	
+	/**
+	 * opcam server upload
+	 */
+	public void ShareToOpcamServer()
+	{
+		Bitmap bmp = null;
+		try {
+			bmp = Images.Media.getBitmap(getContentResolver(), mImagePath);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ByteArrayOutputStream stream = new ByteArrayOutputStream() ;  
+		bmp.compress( CompressFormat.JPEG, 100, stream) ;  
+        byte[] byteArray = stream.toByteArray() ;  
+		
+		ParseFile file = new ParseFile("photo.jpg", byteArray);
+		file.saveInBackground();
+		
+		ParseObject picApplication = new ParseObject("Pictures");
+		picApplication.put("Name", "Anonymous");
+		picApplication.put("Picture", file);
+		picApplication.saveInBackground();
+	}
+	
 	/**
 	 * share to kakaostory
 	 * @param strImgPath
@@ -120,23 +153,15 @@ public class SNSShareActivity extends Activity
 		
 		bSharing= true;
 		
+		ShareToOpcamServer();
+		
 		// Image를 전송할 때 
 		Intent intent = new Intent(Intent.ACTION_SEND); 
 		intent.setType("image/png"); 
 		intent.putExtra(Intent.EXTRA_STREAM, mImagePath); 
 		intent.setPackage("com.kakao.talk");
 		startActivity(intent);
-		
-//		StoryLink storyLink = StoryLink.getLink(getApplicationContext());
-//
-//		// check, intent is available.
-//		if (!storyLink.isAvailableIntent())
-//		{
-//			alert("Not installed KakaoStory.");
-//			return;
-//		}		
-//		storyLink.openStoryLinkImageApp(this, mImagePath.toString());
-		
+				
 		bSharing= false;
 	}
 	
@@ -146,6 +171,7 @@ public class SNSShareActivity extends Activity
 			return;
 		
 		bSharing= true;
+		ShareToOpcamServer();
 		mSimpleFacebook.login(mOnLoginListener);
 	    bSharing= false;
 	}
