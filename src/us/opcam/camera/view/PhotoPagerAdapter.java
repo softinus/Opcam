@@ -35,7 +35,7 @@ public class PhotoPagerAdapter extends PagerAdapter
 	@Override
 	public View instantiateItem(ViewGroup container, int position)
 	{
-		Log.d("test", "selected idx : "+position);
+		//Log.d("test", "selected idx : "+position);
 		
 		PhotoView photoView = new PhotoView(container.getContext());
 		Bitmap bmp = null;
@@ -56,7 +56,15 @@ public class PhotoPagerAdapter extends PagerAdapter
 	}
 
 	@Override
-	public void destroyItem(ViewGroup container, int position, Object object) {
+	public int getItemPosition(Object object)
+	{
+		return POSITION_NONE;
+		//return super.getItemPosition(object);
+	}
+
+	@Override
+	public void destroyItem(ViewGroup container, int position, Object object)
+	{
 		container.removeView((View) object);
 	}
 

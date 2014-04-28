@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/actionbar_delete"
-        android:icon="@android:drawable/ic_menu_delete" 
+        android:icon="@drawable/icon_delete" 
         android:showAsAction="always"
         android:title="actionbar_delete"/>
     
@@ -13,13 +13,13 @@
     -->
     <item
         android:id="@+id/actionbar_edit"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@drawable/icon_effect"
         android:showAsAction="always"
         android:title="actionbar edit"/>
     
         <item
         android:id="@+id/actionbar_share"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/icon_share"
         android:showAsAction="always"
         android:title="actionbar share"/>
 

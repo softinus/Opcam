@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -74,20 +73,22 @@ public class ImageZoomPagerActivity extends Activity
 			int pos= strURIpath.lastIndexOf("/");
 			String strFileName= strURIpath.substring(pos, strURIpath.length());
 			String strNewFilePath= "/sdcard/opcam" + strFileName;
+			// 경로를 URI에서 sdcard 경로로 바꿔줌.
 			
 			new File( strNewFilePath ).delete();	// 파일 지우고
 
-			if (nForDeletePos == mViewPager.getCurrentItem())
+			mViewPager.setAdapter(null);
+			mAdapter.data.remove(nForDeletePos);
+			mViewPager.setAdapter(mAdapter);	// 어댑터 리셋
+			
+			if(nForDeletePos >= 1)
 			{
-                if(nForDeletePos == (data.size()-1)) {
-                	mViewPager.setCurrentItem(nForDeletePos-1);
-                } else if (nForDeletePos == 0){
-                	mViewPager.setCurrentItem(1);
-                }
-            }
-			mViewPager.removeViewAt(nForDeletePos);
-			mAdapter.data.remove(nForDeletePos);	// 뷰 지움.
-			mAdapter.notifyDataSetChanged();
+				mViewPager.setCurrentItem(nForDeletePos-1, true);
+			}
+			else if (nForDeletePos == 0)
+			{
+				mViewPager.setCurrentItem(1, true);
+			}
 			
 			if( mAdapter.data.isEmpty() )
 				finish();
