@@ -43,19 +43,39 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem>
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);
 			holder = new ViewHolder();
-			holder.imageTitle = (TextView) row.findViewById(R.id.text);
-			holder.image = (ImageView) row.findViewById(R.id.image);
+			holder.TXT_name = (TextView) row.findViewById(R.id.text_name);
+			holder.TXT_date = (TextView) row.findViewById(R.id.text_date);
+			holder.IMG_pic = (ImageView) row.findViewById(R.id.image);
 			row.setTag(holder);
 		} else {
 			holder = (ViewHolder) row.getTag();
 		}
 
-		ImageItem item = data.get(position);
-		holder.imageTitle.setText(item.getTitle());
+		ImageItem item = data.get(position);	// ITEM 가져와서
+	
+		String fileName= item.getTitle();
+		String[] tokens= fileName.split("_");
+		
+		if(tokens.length == 3)	// 형식에 맞는 파일 이름이면 토큰이 3개여야 한다.
+		{
+			String year= tokens[1].substring(0, 4);
+			String month= tokens[1].substring(4, 6);
+			String day= tokens[1].substring(6, 8);
+			
+			int extPos= tokens[2].lastIndexOf(".");
+			String numberNotIncludeExt= tokens[2].substring(0, extPos);
+			
+			holder.TXT_name.setText(tokens[0]+"_"+numberNotIncludeExt);
+			holder.TXT_date.setText(year+"."+month+"."+day);
+		}
+		else
+		{
+			holder.TXT_name.setText(item.getTitle());
+			holder.TXT_date.setText("...");
+		}
 		
 		
-		
-		holder.image.setImageBitmap(item.getImage());
+		holder.IMG_pic.setImageBitmap(item.getImage());
 		return row;
 	}
 
@@ -80,7 +100,9 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem>
 
 	static class ViewHolder
 	{
-		TextView imageTitle;
-		ImageView image;
+		//TextView 
+		TextView TXT_name;
+		TextView TXT_date;
+		ImageView IMG_pic;
 	}
 }

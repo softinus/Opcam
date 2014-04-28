@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
     android:orientation="vertical"
     android:padding="5dp" 
     android:background="@drawable/grid_color_selector"    
@@ -13,16 +12,27 @@
     <ImageView
         android:id="@+id/image"
         android:layout_width="110dp"
-        android:layout_height="185dp" >
+        android:layout_height="175dp" >
     </ImageView>
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/text_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:textSize="12sp" >
+        android:textColor="#363636"        
+        android:textSize="14sp" >
+    </TextView>
+    
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:gravity="center"
+        android:textColor="#ff6000"
+        android:textSize="11sp" >
     </TextView>
 
 </LinearLayout>

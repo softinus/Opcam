@@ -272,13 +272,28 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		Bitmap mBitmapCopy2 = mBitmap2.copy(Config.ARGB_8888, true);
 		
 		Calendar cal= Calendar.getInstance();
-		SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		//SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd");
 		String strDate= SDF.format(cal.getTime());
 		
 		String strSaveFileName= "opcam_"+strDate+".jpg";
+		
+		int nCount= 0;
+		while(true)	// 파일을 opcam_20140428_1.jpg 식으로 저장함.
+		{
+			++nCount;
+			String strCount= nCount+"";
+			strSaveFileName= "opcam_"+ strDate +"_"+ strCount +".jpg";
+			
+			File file= new File("sdcard/opcam/" + strSaveFileName);
+			if(!file.exists())	// 해당 파일 이름이 없으면 저장함.
+				break;
+		}
+		
+		
 		if( CombineAndSaveImage(mBitmapCopy1, mBitmapCopy2, true, strSaveFileName) )
 		{
-			Toast.makeText(this, "사진 저장 완료.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Save complete.", Toast.LENGTH_SHORT).show();
 			
 			File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);			
 			uRes= Uri.fromFile(dir);
@@ -520,7 +535,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 
     	try
     	{
-    		int nResolution= prefs.getInt("option_resolutions_list_titles", 1);
+    		int nResolution= Integer.parseInt( prefs.getString("option_resolutions_list_titles", "1") );
     		FileOutputStream fos = new FileOutputStream(file);
     		
     		int nQuality= 85;
