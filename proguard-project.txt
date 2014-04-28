@@ -77,6 +77,15 @@
    native <methods>;
 }
 
+
+-dontwarn oauth.**
+-dontwarn com.android.auth.TwitterHandle.**
+
+-keep class oauth.** { *; }
+-keep class com.android.auth.TwitterHandle.** { *; }
+
+
+
 -keepattributes *Annotation*
 -dontwarn android.support.**
 -keep class android.support.v4.** { *; }
