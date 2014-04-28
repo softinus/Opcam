@@ -60,10 +60,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	private PictureCallback mPicture2;
 	
 	private Context mContext;
-//    private boolean bBackDone= false;
-//    private boolean bFrontDone= false;
-	//private boolean bSkipEffect= false;
-	//private boolean bSkipShare= false;
+	private boolean bSkipEffect= false;
+	private boolean bSkipShare= false;
 	
 	private Uri uCurrentPhoto= null;
 	
@@ -143,28 +141,28 @@ public class CameraPreview2 extends Activity implements OnClickListener
 				
 				ShutButton.setEnabled(false);
 				
-	            //bSkipEffect= prefs.getBoolean("process_skip_effect_step", false); // 키값, 디폴트값
-	            //bSkipShare= prefs.getBoolean("process_skip_share_step", false); // 키값, 디폴트값
+	            bSkipEffect= prefs.getBoolean("process_skip_effect_step", false); // 키값, 디폴트값
+	            bSkipShare= prefs.getBoolean("process_skip_share_step", false); // 키값, 디폴트값
 	            
 	            uCurrentPhoto= SaveBitmapFile();
 	            
-	            GotoAviary(uCurrentPhoto);
-//	            if(bSkipEffect)	// effect 생략,
-//	            {
-//	            	if(!bSkipShare)	// share 생략하면
-//	            	{
-//	            		GotoShareActivity(uCurrentPhoto, null);
-//	            	}
-//	            	else
-//	            	{
-//	            		GotoAviary(uCurrentPhoto);
-//	            	}
-//	            }
-//	            else
-//	            {
-//	            	// 사진 합쳐서 저장하고 Aviary 사진 편집으로 넘어감.
-//	            	GotoAviary(uCurrentPhoto);	            	
-//	            }
+	            //GotoAviary(uCurrentPhoto);
+	            if(bSkipEffect)	// effect 생략,
+	            {
+	            	if(!bSkipShare)	// share 생략하면
+	            	{
+	            		GotoShareActivity(uCurrentPhoto, null);
+	            	}
+	            	else
+	            	{
+	            		//GotoAviary(uCurrentPhoto);
+	            	}
+	            }
+	            else
+	            {
+	            	// 사진 합쳐서 저장하고 Aviary 사진 편집으로 넘어감.
+	            	GotoAviary(uCurrentPhoto);	            	
+	            }
 				
 				
 				// 사진을 다시 찍을 수 있도록 초기화
@@ -361,9 +359,10 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	                        // image has been changed by the user?
 	                        boolean changed = extra.getBoolean( Constants.EXTRA_OUT_BITMAP_CHANGED );
 	                      
-	                        OverwriteBitmap(mImageUri);
+	                        if(changed)
+	                        	OverwriteBitmap(mImageUri);
 	                        
-	                        //if(!bSkipShare)	// share를 스킵하지 않으면
+	                        if(!bSkipShare)	// share를 스킵하지 않으면
 	                        	GotoShareActivity(uCurrentPhoto, extra);
 	                    }
 	                break;
