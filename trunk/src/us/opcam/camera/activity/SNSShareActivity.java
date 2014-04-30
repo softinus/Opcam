@@ -8,6 +8,7 @@ import us.opcam.camera.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
@@ -160,9 +161,12 @@ public class SNSShareActivity extends Activity
 		intent.setType("image/png"); 
 		intent.putExtra(Intent.EXTRA_STREAM, mImagePath); 
 		intent.setPackage("com.kakao.talk");
-		startActivity(intent);
+		//startActivity(intent);
+		startActivityForResult(intent, 1);
 				
 		bSharing= false;
+		
+		
 	}
 	
 	public void ShareToFacebook(View v) throws NameNotFoundException
@@ -247,6 +251,13 @@ public class SNSShareActivity extends Activity
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		mSimpleFacebook.onActivityResult(this, requestCode, resultCode, data); 
+		
+		if(requestCode == 1)
+		{
+			alert("Published successfully.");
+			//GotoGallery();
+		}
+		
 	    super.onActivityResult(requestCode, resultCode, data);
 	}
 	
@@ -265,13 +276,35 @@ public class SNSShareActivity extends Activity
 		}
 	}
 	
-	private void alert(String message)
+	private void GotoCamera()
+	{
+		Intent cameraIntent = new Intent( this, CameraPreview2.class );
+		startActivity(cameraIntent);
+	}
+	private void GotoGallery()
+	{
+		Intent cameraIntent = new Intent( this, GalleryActivity.class );
+		startActivity(cameraIntent);
+	}
+	
+	private void alert(final String message)
 	{
 		new AlertDialog.Builder(this)
 			.setIcon(android.R.drawable.ic_dialog_alert)
 			.setTitle(R.string.app_name)
 			.setMessage(message)
-			.setPositiveButton(android.R.string.ok, null)
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) 
+				{
+					if(message.equals("Published successfully."))
+					{
+						GotoGallery();
+					}
+					
+				}
+			})
 			.create().show();
 	}
 
