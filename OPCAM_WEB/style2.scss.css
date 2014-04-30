@@ -1,0 +1,48 @@
+img.bg {
+	/* Set rules to fill background */
+	min-height: 100%;
+	min-width: 1024px;
+	
+	/* Set up proportionate scaling */
+	width: 100%;
+	height: auto;
+	
+	/* Set up positioning */
+	position: fixed;
+	top: 0;
+	left: 0;
+}
+
+@media screen and (max-width: 1024px){
+	img.bg {
+		left: 50%;
+		margin-left: -512px; }
+}
+
+div#copyright {
+	position: relative;
+	margin-bottom: 20;
+	text-align: center;
+	vertical-align: bottom;
+	font: 12px/1.6 Apple Gothic, Latin font, sans-serif,arial;
+	color: #ddd;
+}
+div#content {
+	/* This is the only important rule */
+	/* We need our content to show up on top of the background */
+	position: relative; 
+		
+	/* These have no effect on the functionality */
+	width: 500px;
+	margin: 0 auto;
+	text-align: center;
+	vertical-align: middle;
+	padding: 20px;
+}
+
+body {
+	/* These rules have no effect on the functionality */
+	/* They are for styling only */
+	margin: 0;
+	padding: 20px 0 0 0;
+}

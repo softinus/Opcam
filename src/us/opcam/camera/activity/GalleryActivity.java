@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -76,6 +77,18 @@ public class GalleryActivity extends Activity
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.gallery, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+		case R.id.actionbar_camera:
+			GotoCamera();
+			break;
+		}
 		return true;
 	}
 	
@@ -173,6 +186,12 @@ public class GalleryActivity extends Activity
 		return imageItems;	
 	}
 	
+	
+	private void GotoCamera()
+	{
+		Intent cameraIntent = new Intent( this, CameraPreview2.class );
+		startActivity(cameraIntent);
+	}
 
 	
 	public void toast(String msg)

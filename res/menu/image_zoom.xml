@@ -5,7 +5,7 @@
         android:id="@+id/actionbar_delete"
         android:icon="@drawable/icon_delete" 
         android:showAsAction="always"
-        android:title="actionbar_delete"/>
+        android:title="delete"/>
     
     <!-- android:background="@drawable/**** -->
     <!-- android:icon="@android:drawable/ic_menu_add" 
@@ -15,12 +15,12 @@
         android:id="@+id/actionbar_edit"
         android:icon="@drawable/icon_effect"
         android:showAsAction="always"
-        android:title="actionbar edit"/>
+        android:title="effect"/>
     
         <item
         android:id="@+id/actionbar_share"
         android:icon="@drawable/icon_share"
         android:showAsAction="always"
-        android:title="actionbar share"/>
+        android:title="share"/>
 
 </menu>
