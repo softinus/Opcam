@@ -283,7 +283,7 @@ public class SNSShareActivity extends Activity
 	}
 	private void GotoGallery()
 	{
-		Intent cameraIntent = new Intent( this, GalleryActivity.class );
+		Intent cameraIntent = new Intent( this, GalleryTabsActivity.class );
 		startActivity(cameraIntent);
 	}
 	
