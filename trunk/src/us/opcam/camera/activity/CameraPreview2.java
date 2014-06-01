@@ -216,7 +216,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		}
 		else if(v.getId() == R.id.btn_gallery)
 		{
-			Intent intent= new Intent(CameraPreview2.this, GalleryActivity.class);
+			Intent intent= new Intent(CameraPreview2.this, GalleryTabsActivity.class);
 			startActivity(intent);
 		}
 	}
