@@ -12,6 +12,15 @@ public class ImageItem
 	private String title;
 	private String uri;
 	private String uri4Share;
+	private String parseURL;
+
+	public String getParseURL() {
+		return parseURL;
+	}
+
+	public void setParseURL(String parseURL) {
+		this.parseURL = parseURL;
+	}
 
 	public String getUri4Share() {
 		return uri4Share;
@@ -21,6 +30,10 @@ public class ImageItem
 		this.uri4Share = uri4Share;
 	}
 
+	public ImageItem(String _parseURL)
+	{
+		this.parseURL = _parseURL;
+	}
 	public ImageItem(Bitmap image, String title, String uri, String uri2)
 	{
 		super();

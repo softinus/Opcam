@@ -3,6 +3,7 @@ package us.opcam.camera.activity;
 import java.util.Locale;
 
 import us.opcam.camera.R;
+import us.opcam.camera.view.DiscoverGalleryFragment;
 import us.opcam.camera.view.LocalGalleryFragment;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
@@ -63,16 +64,18 @@ public class GalleryTabsActivity extends FragmentActivity
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
-		mViewPager
-				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-					@Override
-					public void onPageSelected(int position) {
-						actionBar.setSelectedNavigationItem(position);
-					}
-				});
+		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
+		{
+			@Override
+			public void onPageSelected(int position)
+			{
+				actionBar.setSelectedNavigationItem(position);
+			}
+		});
 
 		// For each of the sections in the app, add a tab to the action bar.
-		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
+		{
 			// Create a tab with text corresponding to the page title defined by
 			// the adapter. Also specify this Activity object, which implements
 			// the TabListener interface, as the callback (listener) for when
@@ -121,8 +124,8 @@ public class GalleryTabsActivity extends FragmentActivity
 	}
 
 	@Override
-	public void onTabSelected(ActionBar.Tab tab,
-			FragmentTransaction fragmentTransaction) {
+	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
+	{
 		// When the given tab is selected, switch to the corresponding page in
 		// the ViewPager.
 		mViewPager.setCurrentItem(tab.getPosition());
@@ -155,29 +158,37 @@ public class GalleryTabsActivity extends FragmentActivity
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			Fragment fragment = new LocalGalleryFragment();
-			return fragment;
+			if(position == 0)
+			{
+				Fragment fragment = new LocalGalleryFragment();
+				return fragment;	
+			}
+			else
+			{
+				Fragment fragment = new DiscoverGalleryFragment();
+				return fragment;
+			}
+			
+			
 		}
 
 		@Override
 		public int getCount()
 		{
 			// Show 3 total pages.
-			return 3;
+			return 2;
 		}
 
 		@Override
 		public CharSequence getPageTitle(int position)
 		{
-			Locale l = Locale.getDefault();
+			//Locale l = Locale.getDefault();
 			switch (position)
 			{
 			case 0:
-				return getString(R.string.title_section1).toUpperCase(l);
+				return "Me";
 			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
-			case 2:
-				return getString(R.string.title_section3).toUpperCase(l);
+				return "Discover";
 			}
 			return null;
 		}
