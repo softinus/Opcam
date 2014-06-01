@@ -1,4 +1,4 @@
-package us.opcam.camera.activity;
+package us.opcam.camera.view;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -8,35 +8,48 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import us.opcam.camera.R;
+import us.opcam.camera.activity.CameraPreview2;
+import us.opcam.camera.activity.ImageZoomPagerActivity;
 import us.opcam.camera.util.ImageItem;
-import us.opcam.camera.view.GridViewAdapter;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.Menu;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 
-public class GalleryActivity extends Activity 
+public class LocalGalleryFragment extends Fragment
 {
+	
 	private GridView gridView;
 	private GridViewAdapter customGridAdapter;
 	
 	ArrayList<ImageItem> arrImages= null;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) 
+	public LocalGalleryFragment()
 	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fragment_local_gallery);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{		
+		return inflater.inflate(R.layout.fragment_local_gallery, container, false);
+	}
+	
+	
+	@Override
+	public void onStart()
+	{
+		//setContentView(R.layout.activity_gallery);
 		
 		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
 		
@@ -44,15 +57,15 @@ public class GalleryActivity extends Activity
 		if(arrImages == null || arrImages.isEmpty()) 
 		{
 			toast("No pictures on opcam folder");
-			finish();
+			getActivity().finish();
 			return;
 		}
 		
 		
 		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
 		
-		gridView = (GridView) findViewById(R.id.grid_view);
-		customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, arrImages);
+		gridView = (GridView) getView().findViewById(R.id.grid_view);
+		customGridAdapter = new GridViewAdapter(getActivity(), R.layout.row_grid, arrImages);
 		gridView.setAdapter(customGridAdapter);
 
 		gridView.setOnItemClickListener(new OnItemClickListener()
@@ -63,23 +76,17 @@ public class GalleryActivity extends Activity
 				
                 //Intent intent = new Intent(getApplicationContext(), ImageZoomActivity.class);
 				//intent.putExtra("uri", currUri);
-				Intent intent = new Intent(getApplicationContext(), ImageZoomPagerActivity.class);
+				Intent intent = new Intent(getActivity().getApplicationContext(), ImageZoomPagerActivity.class);
                 intent.putParcelableArrayListExtra("uri_list", getParcelData());
                 intent.putExtra("selected_position", position);
                 startActivityForResult(intent, 0);
 			}
 
 		});
+		
+		super.onStart();		
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.gallery, menu);
-		return true;
-	}
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -103,31 +110,7 @@ public class GalleryActivity extends Activity
 		return arrRes;
 	}
 	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		if(requestCode != 0)
-			return;
-		
-		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
-		
-		// 데이터가 아무것도 없으면
-		if(arrImages == null || arrImages.isEmpty())
-		{
-			toast("No pictures on opcam folder");
-			finish();
-			return;
-		}
-		
-		
-		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
-		
-		gridView = (GridView) findViewById(R.id.grid_view);
-		customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, arrImages);
-		gridView.setAdapter(customGridAdapter);
-		
-		super.onActivityResult(requestCode, resultCode, data);
-	}
+	
 
 	// 해당 폴더 안에 있는 각 이미지를 가져온다.
 	private ArrayList<ImageItem> getData()
@@ -141,8 +124,10 @@ public class GalleryActivity extends Activity
 			return null;
 		}
 		
-		File[] fileLists= dir.listFiles(new FilenameFilter() {
-		    public boolean accept(File directory, String fileName) {
+		File[] fileLists= dir.listFiles(new FilenameFilter()
+		{
+		    public boolean accept(File directory, String fileName)
+		    {
 		        return fileName.endsWith(".jpg");
 		    }
 		});
@@ -186,17 +171,21 @@ public class GalleryActivity extends Activity
 		return imageItems;	
 	}
 	
+
+	
+	
+
+
 	
 	private void GotoCamera()
 	{
-		Intent cameraIntent = new Intent( this, CameraPreview2.class );
+		Intent cameraIntent = new Intent( getActivity(), CameraPreview2.class );
 		startActivity(cameraIntent);
 	}
 
 	
 	public void toast(String msg)
     {
-        Toast.makeText (this.getApplicationContext(), msg, Toast.LENGTH_SHORT).show ();
+        Toast.makeText (getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show ();
     }
-
 }
