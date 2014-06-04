@@ -18,13 +18,13 @@ import android.widget.TextView;
  * @author javatechig {@link http://javatechig.com}
  * 
  */
-public class GridViewAdapter extends ArrayAdapter<ImageItem>
+public class LocalGridViewAdapter extends ArrayAdapter<ImageItem>
 {
 	private Context context;
 	private int layoutResourceId;
 	private ArrayList<ImageItem> data = new ArrayList<ImageItem>();
 
-	public GridViewAdapter(Context context, int layoutResourceId, ArrayList<ImageItem> data)
+	public LocalGridViewAdapter(Context context, int layoutResourceId, ArrayList<ImageItem> data)
 	{
 		super(context, layoutResourceId, data);
 		this.layoutResourceId = layoutResourceId;

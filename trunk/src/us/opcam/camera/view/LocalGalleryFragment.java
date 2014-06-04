@@ -31,7 +31,7 @@ public class LocalGalleryFragment extends Fragment
 {
 	
 	private GridView gridView;
-	private GridViewAdapter customGridAdapter;
+	private LocalGridViewAdapter customGridAdapter;
 	
 	ArrayList<ImageItem> arrImages= null;
 
@@ -56,6 +56,8 @@ public class LocalGalleryFragment extends Fragment
 		// 데이터가 아무것도 없으면
 		if(arrImages == null || arrImages.isEmpty()) 
 		{
+			super.onStart();
+			
 			toast("No pictures on opcam folder");
 			getActivity().finish();
 			return;
@@ -65,7 +67,7 @@ public class LocalGalleryFragment extends Fragment
 		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
 		
 		gridView = (GridView) getView().findViewById(R.id.grid_view);
-		customGridAdapter = new GridViewAdapter(getActivity(), R.layout.row_grid, arrImages);
+		customGridAdapter = new LocalGridViewAdapter(getActivity(), R.layout.local_row_grid, arrImages);
 		gridView.setAdapter(customGridAdapter);
 
 		gridView.setOnItemClickListener(new OnItemClickListener()
