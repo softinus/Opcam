@@ -3,6 +3,10 @@ package us.opcam.camera.activity;
 import android.app.Application;
 
 import com.facebook.SessionDefaultAudience;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.parse.Parse;
 import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.SimpleFacebook;
@@ -44,6 +48,19 @@ public class OpcamApp extends Application
 		
 		{	// parse init
 			Parse.initialize(this, "5qeL512r6WzBuHnxGhMKLNNj0tUCBAI26FPN4TRl", "V2mAVufHvtdaTwlas4LANYSJoQbdFrcAomBRcOL7");
+		}
+		
+		{
+			// Create global configuration and initialize ImageLoader with this configuration	        
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+			.threadPriority(Thread.NORM_PRIORITY - 2)
+			.denyCacheImageMultipleSizesInMemory()
+			.diskCacheFileNameGenerator(new Md5FileNameGenerator())
+			.tasksProcessingOrder(QueueProcessingType.LIFO)
+			.writeDebugLogs() // Remove for release app
+			.build();
+			
+			ImageLoader.getInstance().init(config);
 		}
 	}
 

@@ -1,21 +1,23 @@
 package us.opcam.camera.view;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import us.opcam.camera.R;
-import us.opcam.camera.util.ImageItem;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -23,10 +25,17 @@ import com.parse.ParseQuery;
 
 public class DiscoverGalleryFragment extends Fragment
 {
-	private GridView gridView;
-	private GridViewAdapter customGridAdapter;
+	//private GridView gridView;
+	//private LocalGridViewAdapter customGridAdapter;
+	protected AbsListView listView;
+	private DiscoverGridViewAdapter customGridAdapter;
 	
-	ArrayList<ImageItem> arrImages= null;
+	protected ImageLoader imageLoader = ImageLoader.getInstance();
+	//ArrayList<ImageItem> arrImages= null;
+	ArrayList<String> arrImages= null;
+	
+	DisplayImageOptions options;
+	
 
 	public DiscoverGalleryFragment()
 	{
@@ -35,55 +44,62 @@ public class DiscoverGalleryFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{		
-		return inflater.inflate(R.layout.fragment_local_gallery, container, false);
+		return inflater.inflate(R.layout.fragment_discover_gallery, container, false);
 	}
 	
 	@Override
 	public void onStart()
 	{
-		//setContentView(R.layout.activity_gallery);
-		
 		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
 		
 		// 데이터가 아무것도 없으면
 		if(arrImages == null || arrImages.isEmpty()) 
 		{
+			super.onStart();
 			toast("No pictures on opcam folder");
 			getActivity().finish();
 			return;
 		}
 		
 		
-//		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
-//		
-//		gridView = (GridView) getView().findViewById(R.id.grid_view);
-//		customGridAdapter = new GridViewAdapter(getActivity(), R.layout.row_grid, arrImages);
-//		gridView.setAdapter(customGridAdapter);
+		options = new DisplayImageOptions.Builder()
+		.showImageOnLoading(R.drawable.ic_stub)
+		.showImageForEmptyUri(R.drawable.ic_empty)
+		.showImageOnFail(R.drawable.ic_error)
+		.cacheInMemory(true)
+		.cacheOnDisk(true)
+		.considerExifParams(true)
+		.bitmapConfig(Bitmap.Config.RGB_565)
+		.build();
+		
+		listView = (GridView) getView().findViewById(R.id.gridview);
+		customGridAdapter= new DiscoverGridViewAdapter(this.getActivity().getApplicationContext(), imageLoader, arrImages, options);
+		((GridView) listView).setAdapter(customGridAdapter);
+		listView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+			{			
+				//startImagePagerActivity(position);
+			}
+		});
+		
+		
 
+		super.onStart();
 		
-		
-//		gridView.setOnItemClickListener(new OnItemClickListener()
-//		{
-//			public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-//			{
-//				//String currUri= arrImages.get(position).getUri4Share();
-//				
-//                //Intent intent = new Intent(getApplicationContext(), ImageZoomActivity.class);
-//				//intent.putExtra("uri", currUri);
-//				Intent intent = new Intent(getActivity().getApplicationContext(), ImageZoomPagerActivity.class);
-//                intent.putParcelableArrayListExtra("uri_list", getParcelData());
-//                intent.putExtra("selected_position", position);
-//                startActivityForResult(intent, 0);
-//			}
-//
-//		});
-		
-		super.onStart();		
 	}
 	
-	protected ArrayList<ImageItem> getData()
+//	private void startImagePagerActivity(int position)
+//	{
+//		Intent intent = new Intent(this, ImagePagerActivity.class);
+//		intent.putExtra(Extra.IMAGES, imageUrls);
+//		intent.putExtra(Extra.IMAGE_POSITION, position);
+//		startActivity(intent);
+//	}
+	
+	protected ArrayList<String> getData()
 	{
-		final ArrayList<ImageItem> arrPicList= new ArrayList<ImageItem>();
+		final ArrayList<String> arrPicList= new ArrayList<String>();
 		
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Pictures");
 		query.whereEqualTo("Name", "Anonymous");
@@ -95,8 +111,8 @@ public class DiscoverGalleryFragment extends Fragment
             	ParseFile file= (ParseFile) p.get("Picture");
             	if(file != null)
             	{
-            		ImageItem item= new ImageItem(file.getUrl());
-            		arrPicList.add(item);		             	
+            		//ImageItem item= new ImageItem(file.getUrl());
+            		arrPicList.add(file.getUrl());		             	
             	}
             }
 			
@@ -133,14 +149,4 @@ public class DiscoverGalleryFragment extends Fragment
         Toast.makeText (getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show ();
     }
 	
-//	// 이미지 리스트 중 Uri만을 추려낸다.
-//	private ArrayList<Uri> getParcelData()
-//	{
-//		final ArrayList<Uri> arrRes= new ArrayList<Uri>();
-//		
-//		for(ImageItem item : arrImages)
-//			arrRes.add( Uri.parse( item.getUri4Share() ) );
-//		
-//		return arrRes;
-//	}
 }
