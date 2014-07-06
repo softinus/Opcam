@@ -71,9 +71,20 @@ public class CameraPreview2 extends Activity implements OnClickListener
     @Override
 	protected void onCreate(Bundle savedInstanceState)
     {
+    	mContext= this.getApplicationContext();
+    	String myID= SPUtil.getString(mContext, "my_id");
+    	
+    	if(myID == null)
+    	{
+    		Intent intent= new Intent(CameraPreview2.this, LoginActivity.class);
+        	startActivity(intent);
+    	}
+    	
+    	
+    	
         super.onCreate(savedInstanceState);
         
-        mContext= this.getApplicationContext();
+        
         //prefs= PreferenceManager.getDefaultSharedPreferences(mContext);
         
         
