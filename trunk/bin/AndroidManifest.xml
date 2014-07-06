@@ -64,7 +64,7 @@
         </activity>
 
         <!-- Facebook SDK -->
-        <activity android:name="com.facebook.LoginActivity">
+        <activity android:name="com.facebook.LoginActivity" >
         </activity>
 
         <!-- CDS Content Service -->
@@ -81,7 +81,7 @@
         <!--
         Cds Content Provider, 
         NOTE that the "authorities" value MUST be formatted in this way:
-        android:authorities="{your.packagename}.AviaryCdsProvider"
+        android:authorities="{your.packagename}.AviaryCdsProvider"
         -->
         <provider
             android:name="com.aviary.android.feather.cds.AviaryCdsProvider"
@@ -109,12 +109,15 @@
             android:label="@string/title_activity_image_zoom"
             android:theme="@style/FullscreenTheme" >
         </activity>
-        
         <activity android:name="us.opcam.camera.activity.ImageZoomPagerActivity" />
+        <activity
+            android:name="us.opcam.camera.activity.GalleryTabsActivity"
+            android:label="@string/title_activity_gallery_tabs" >
+        </activity>
     </application>
 
     <uses-sdk
-        android:minSdkVersion="10"
+        android:minSdkVersion="11"
         android:targetSdkVersion="18" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -122,7 +125,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
 </manifest>

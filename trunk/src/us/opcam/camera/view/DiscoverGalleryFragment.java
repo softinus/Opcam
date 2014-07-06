@@ -1,6 +1,7 @@
 package us.opcam.camera.view;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import us.opcam.camera.R;
@@ -61,6 +62,7 @@ public class DiscoverGalleryFragment extends Fragment
 			return;
 		}
 		
+		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게		
 		
 		options = new DisplayImageOptions.Builder()
 		.showImageOnLoading(R.drawable.ic_stub)
