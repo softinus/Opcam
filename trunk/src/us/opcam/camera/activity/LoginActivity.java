@@ -1,18 +1,26 @@
 package us.opcam.camera.activity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import us.opcam.camera.R;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build.VERSION;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -25,13 +33,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.List;
 
-import us.opcam.camera.R;
-import us.opcam.camera.R.id;
-import us.opcam.camera.R.layout;
-import us.opcam.camera.R.string;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 /**
  * A login screen that offers login via email/password.
@@ -63,10 +68,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 		setContentView(R.layout.activity_login);
 
 		// Set up the login form.
-		mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+		mEmailView = (AutoCompleteTextView) findViewById(R.id.txt_email);
 		populateAutoComplete();
 
-		mPasswordView = (EditText) findViewById(R.id.password);
+		mPasswordView = (EditText) findViewById(R.id.txt_password);
 		mPasswordView
 				.setOnEditorActionListener(new TextView.OnEditorActionListener()
 				{
@@ -229,6 +234,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 		}
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
 	{
@@ -326,6 +332,28 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 
 		mEmailView.setAdapter(adapter);
 	}
+	
+
+	private void alert(final String message)
+	{
+		new AlertDialog.Builder(this)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setTitle(R.string.app_name)
+			.setMessage(message)
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) 
+				{
+					if(message.equals("Sign successful!"))
+					{
+						Intent intent= new Intent(LoginActivity.this, CameraPreview2.class);
+						startActivity(intent);					
+					}
+				}
+			})
+			.create().show();
+	}
 
 	/**
 	 * Represents an asynchronous login/registration task used to authenticate
@@ -347,9 +375,34 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 		protected Boolean doInBackground(Void... params)
 		{
 			// TODO: attempt authentication against a network service.
-
 			try
 			{
+				ParseUser user = new ParseUser();
+				user.setUsername(mEmail);
+				user.setPassword(mPassword);
+				user.setEmail(mEmail);
+				 
+				// other fields can be set just like with ParseObject
+				//user.put("phone", "650-253-0000");
+				 
+				user.signUpInBackground(new SignUpCallback()
+				{
+				  public void done(ParseException e)
+				  {
+				    if (e == null)
+				    {				
+				    	alert("Sign successful!");
+				      // Hooray! Let them use the app now.
+
+				    	//finish();
+				    } else {
+				      // Sign up didn't succeed. Look at the ParseException
+				      // to figure out what went wrong
+				    	alert("Sign failed!");
+				    }
+				  }
+				});
+				
 				// Simulate network access.
 				Thread.sleep(2000);
 			} catch (InterruptedException e)
@@ -394,5 +447,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 			mAuthTask = null;
 			showProgress(false);
 		}
+		
+
 	}
 }
