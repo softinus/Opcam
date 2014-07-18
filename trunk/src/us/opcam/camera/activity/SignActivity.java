@@ -1,7 +1,10 @@
-package us.opcam.camera;
+package us.opcam.camera.activity;
 
-import us.opcam.camera.activity.CameraPreview2;
-import us.opcam.camera.activity.LoginActivity.UserLoginTask;
+import us.opcam.camera.R;
+import us.opcam.camera.R.id;
+import us.opcam.camera.R.layout;
+import us.opcam.camera.R.string;
+import us.opcam.camera.util.SPUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -30,10 +33,8 @@ public class SignActivity extends Activity
 	String mEmail="";
 	String mPassword="";
 
-	Button BTN_sign;
+	Button BTN_sign, BTN_facebook, BTN_kakao;
 	EditText EDT_id, EDT_pw;
-	
-	private UserLoginTask mAuthTask = null;	// ·Î±×ÀÎ task
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -46,6 +47,8 @@ public class SignActivity extends Activity
 		EDT_id= (EditText) findViewById(R.id.txt_email);
 		EDT_pw= (EditText) findViewById(R.id.txt_password);
 		BTN_sign= (Button) findViewById(R.id.email_sign_in_button);
+		BTN_facebook= (Button) findViewById(R.id.btn_login_passport_facebook);
+		BTN_kakao= (Button) findViewById(R.id.btn_login_passport_kakao);
 		
 		BTN_sign.setOnClickListener(new OnClickListener()
 		{
@@ -55,6 +58,31 @@ public class SignActivity extends Activity
 				attemptLogin();
 			}
 		});
+		
+		BTN_facebook.setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+				SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
+				Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+				startActivity(intent);
+				finish();
+			}
+		});
+		
+		BTN_kakao.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View view)
+			{
+				SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
+				Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+				startActivity(intent);
+				finish();
+			}
+		});
+		
+		
 	}
 	
 	
@@ -65,11 +93,6 @@ public class SignActivity extends Activity
 	 */
 	public void attemptLogin()
 	{
-		if (mAuthTask != null)
-		{
-			return;
-		}
-
 		// Reset errors.
 		EDT_id.setError(null);
 		EDT_pw.setError(null);

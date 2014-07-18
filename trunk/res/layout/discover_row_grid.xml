@@ -1,16 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="120dip">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp" 
+    android:background="@drawable/grid_color_selector"    
+    android:clickable="false"
+	android:focusable="false"
+	android:focusableInTouchMode="false">
 
     <ImageView
         android:id="@+id/image"
-        android:layout_width="fill_parent"
-        android:layout_height="120dip"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/descr_image"
-        android:scaleType="centerCrop" />
+        android:layout_width="110.16dp"
+        android:layout_height="174.22dp" >
+    </ImageView>
 
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:textColor="#363636"        
+        android:textSize="14sp" >
+    </TextView>
+    
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:gravity="center"
+        android:textColor="#ff6000"
+        android:textSize="11sp" >
+    </TextView>
+    
+    
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="fill_parent"
@@ -19,4 +44,5 @@
         android:max="100"
         android:layout_gravity="bottom"
         style="@style/ProgressBarStyle" />
-</FrameLayout>
+
+</LinearLayout>
