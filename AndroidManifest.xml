@@ -121,7 +121,7 @@
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
-            android:name=".SignActivity"
+            android:name="us.opcam.camera.activity.SignActivity"
             android:label="@string/title_activity_sign"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateVisible"  >

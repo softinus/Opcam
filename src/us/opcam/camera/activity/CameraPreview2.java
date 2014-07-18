@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import us.opcam.camera.R;
-import us.opcam.camera.SignActivity;
 import us.opcam.camera.util.SPUtil;
 import us.opcam.camera.view.CameraView;
 import android.app.Activity;
