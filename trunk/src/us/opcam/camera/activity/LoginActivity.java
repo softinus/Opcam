@@ -34,6 +34,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -43,7 +44,10 @@ import com.parse.SignUpCallback;
  */
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 {
+	String mEmail="";
+	String mPassword="";
 
+	
 	/**
 	 * A dummy authentication store containing known user names and passwords.
 	 * TODO: remove after connecting to a real authentication system.
@@ -60,7 +64,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 	private EditText mPasswordView;
 	private View mProgressView;
 	private View mLoginFormView;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -334,26 +338,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 	}
 	
 
-	private void alert(final String message)
-	{
-		new AlertDialog.Builder(this)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setTitle(R.string.app_name)
-			.setMessage(message)
-			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) 
-				{
-					if(message.equals("Sign successful!"))
-					{
-						Intent intent= new Intent(LoginActivity.this, CameraPreview2.class);
-						startActivity(intent);					
-					}
-				}
-			})
-			.create().show();
-	}
+
 
 	/**
 	 * Represents an asynchronous login/registration task used to authenticate
@@ -362,8 +347,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 	public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
 	{
 
-		private final String mEmail;
-		private final String mPassword;
+
 
 		UserLoginTask(String email, String password)
 		{
@@ -391,14 +375,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 				  {
 				    if (e == null)
 				    {				
-				    	alert("Sign successful!");
+				    	alert("Sign up successful!");
 				      // Hooray! Let them use the app now.
 
 				    	//finish();
 				    } else {
 				      // Sign up didn't succeed. Look at the ParseException
 				      // to figure out what went wrong
-				    	alert("Sign failed!");
+				    	alert("It is already exists account. Swith to login.");
+				    	
+
 				    }
 				  }
 				});
@@ -448,6 +434,47 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
 			showProgress(false);
 		}
 		
+		
+		
 
 	}
+	
+	
+	private void alert(final String message)
+	{
+		new AlertDialog.Builder(this)
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setTitle(R.string.app_name)
+			.setMessage(message)
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) 
+				{
+					if(message.contains("successful!"))
+					{
+						Intent intent= new Intent(LoginActivity.this, CameraPreview2.class);
+						startActivity(intent);					
+					}
+					else if(message.contains(""))
+					{
+				    	ParseUser.logInInBackground(mEmail, mPassword, new LogInCallback()
+				    	{
+			    		  public void done(ParseUser user, ParseException e)
+			    		  {
+			    		    if (user != null) {
+			    		      // Hooray! The user is logged in.
+			    		    	alert("Login successful!");
+			    		    } else {
+			    		      // Signup failed. Look at the ParseException to see what happened.
+			    		    	alert("Login failed!\nPlease check e-mail or password.");
+			    		    }
+			    		  }
+			    		});
+					}
+				}
+			})
+			.create().show();
+	}
+
 }

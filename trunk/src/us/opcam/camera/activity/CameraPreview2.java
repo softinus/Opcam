@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import us.opcam.camera.R;
+import us.opcam.camera.SignActivity;
 import us.opcam.camera.util.SPUtil;
 import us.opcam.camera.view.CameraView;
 import android.app.Activity;
@@ -76,7 +77,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
     	
     	if(myID == null)
     	{
-    		Intent intent= new Intent(CameraPreview2.this, LoginActivity.class);
+    		Intent intent= new Intent(CameraPreview2.this, SignActivity.class);
         	startActivity(intent);
         	finish();
     	}
