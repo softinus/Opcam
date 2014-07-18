@@ -78,6 +78,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
     	{
     		Intent intent= new Intent(CameraPreview2.this, LoginActivity.class);
         	startActivity(intent);
+        	finish();
     	}
     	
     	
