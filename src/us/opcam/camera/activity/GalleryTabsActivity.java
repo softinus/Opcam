@@ -47,6 +47,8 @@ public class GalleryTabsActivity extends FragmentActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gallery_tabs);
+		
+		setTitle("Gallery");	// °¶·¯¸®
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();

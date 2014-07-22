@@ -24,7 +24,7 @@ import android.widget.Toast;
 import com.aviary.android.feather.FeatherActivity;
 import com.aviary.android.feather.library.Constants;
 
-public class ImageZoomPagerActivity extends Activity
+public class LocalImageZoomPagerActivity extends Activity
 {
 	ArrayList<Uri> data= null;
 	ViewPager mViewPager= null;
@@ -37,7 +37,7 @@ public class ImageZoomPagerActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_image_zoom2);
+		setContentView(R.layout.activity_image_zoom_pager);
         mViewPager = (HackyViewPager) findViewById(R.id.view_pager);
 		setContentView(mViewPager);
 				

@@ -9,7 +9,7 @@ import java.util.Comparator;
 
 import us.opcam.camera.R;
 import us.opcam.camera.activity.CameraPreview2;
-import us.opcam.camera.activity.ImageZoomPagerActivity;
+import us.opcam.camera.activity.LocalImageZoomPagerActivity;
 import us.opcam.camera.util.ImageItem;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -67,7 +67,7 @@ public class LocalGalleryFragment extends Fragment
 		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
 		
 		gridView = (GridView) getView().findViewById(R.id.grid_view);
-		customGridAdapter = new LocalGridViewAdapter(getActivity(), R.layout.local_row_grid, arrImages);
+		customGridAdapter = new LocalGridViewAdapter(getActivity(), R.layout.item_local_grid, arrImages);
 		gridView.setAdapter(customGridAdapter);
 
 		gridView.setOnItemClickListener(new OnItemClickListener()
@@ -78,7 +78,7 @@ public class LocalGalleryFragment extends Fragment
 				
                 //Intent intent = new Intent(getApplicationContext(), ImageZoomActivity.class);
 				//intent.putExtra("uri", currUri);
-				Intent intent = new Intent(getActivity().getApplicationContext(), ImageZoomPagerActivity.class);
+				Intent intent = new Intent(getActivity().getApplicationContext(), LocalImageZoomPagerActivity.class);
                 intent.putParcelableArrayListExtra("uri_list", getParcelData());
                 intent.putExtra("selected_position", position);
                 startActivityForResult(intent, 0);

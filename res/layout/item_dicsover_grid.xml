@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -19,6 +19,7 @@
         android:id="@+id/text_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/image"
         android:layout_marginTop="5dp"
         android:gravity="center"
         android:textColor="#363636"        
@@ -29,6 +30,7 @@
         android:id="@+id/text_date"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/text_name"
         android:layout_marginTop="1dp"
         android:gravity="center"
         android:textColor="#ff6000"
@@ -45,4 +47,4 @@
         android:layout_gravity="bottom"
         style="@style/ProgressBarStyle" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -22,6 +23,8 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 
 class ViewHolder
 {
+	TextView txtName;
+	TextView txtDate;
 	ImageView imageView;
 	ProgressBar progressBar;
 }
@@ -32,13 +35,19 @@ public class DiscoverGridViewAdapter extends BaseAdapter
 	DisplayImageOptions options;
 	ImageLoader loader;
 	ArrayList<String> arrImages= new ArrayList<String>();
+	ArrayList<String> arrDate= new ArrayList<String>();
+	ArrayList<String> arrNames= new ArrayList<String>();
 	
-	public DiscoverGridViewAdapter(Context _context, ImageLoader _loader, ArrayList<String> _arrImages, DisplayImageOptions _options)
+	public DiscoverGridViewAdapter(Context _context, ImageLoader _loader
+			,ArrayList<String> _arrImages, DisplayImageOptions _options
+			,ArrayList<String> _arrName, ArrayList<String> _arrDate)
 	{
 		this.mContext= _context;
 		this.loader= _loader;
 		this.arrImages= _arrImages;
 		this.options= _options;
+		this.arrDate= _arrDate;
+		this.arrNames= _arrName;
 	}
 	@Override
 	public int getCount()
@@ -67,17 +76,21 @@ public class DiscoverGridViewAdapter extends BaseAdapter
 		{
 			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
 			
-			view = inflater.inflate(R.layout.discover_row_grid, parent, false);
+			view = inflater.inflate(R.layout.item_dicsover_grid, parent, false);
 			holder = new ViewHolder();
 			assert view != null;
 			holder.imageView = (ImageView) view.findViewById(R.id.image);
 			holder.progressBar = (ProgressBar) view.findViewById(R.id.progress);
+			holder.txtDate = (TextView) view.findViewById(R.id.text_date);
+			holder.txtName = (TextView) view.findViewById(R.id.text_name);
 			view.setTag(holder);
 		} else {
 			holder = (ViewHolder) view.getTag();
 		}
+		holder.txtName.setText(arrNames.get(position));
+		holder.txtDate.setText(arrDate.get(position));
 
-		// 이미지 출력과 그에 대한 각종 콜백 함수들...
+		// 이미지 출력과 그에 대한 각종 콜백 함수들... (이미지로더 오픈소스)
 		loader.displayImage(arrImages.get(position), holder.imageView, options, new SimpleImageLoadingListener()
 		{
 									 @Override
