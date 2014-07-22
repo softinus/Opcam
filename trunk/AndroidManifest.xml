@@ -102,14 +102,13 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
-
         <activity
             android:name=".activity.ImageZoomActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_image_zoom"
             android:theme="@style/FullscreenTheme" >
         </activity>
-        <activity android:name=".activity.ImageZoomPagerActivity" />
+        <activity android:name=".activity.LocalImageZoomPagerActivity" />
         <activity
             android:name=".activity.GalleryTabsActivity"
             android:label="@string/title_activity_gallery_tabs" >
@@ -125,6 +124,9 @@
             android:label="@string/title_activity_sign"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateVisible"  >
+        </activity>
+        <activity
+            android:name=".activity.URLImagePagerActivity">
         </activity>
     </application>
 

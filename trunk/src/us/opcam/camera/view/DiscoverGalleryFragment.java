@@ -1,10 +1,15 @@
 package us.opcam.camera.view;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import us.opcam.camera.R;
+import us.opcam.camera.activity.URLImagePagerActivity;
+import us.opcam.camera.util.Constants.Extra;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,6 +39,8 @@ public class DiscoverGalleryFragment extends Fragment
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	//ArrayList<ImageItem> arrImages= null;
 	ArrayList<String> arrImages= null;
+	final ArrayList<String> arrUploadDate= new ArrayList<String>();
+	final ArrayList<String> arrUploadName= new ArrayList<String>();
 	
 	DisplayImageOptions options;
 	
@@ -62,33 +69,53 @@ public class DiscoverGalleryFragment extends Fragment
 			return;
 		}
 		
-		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게		
+		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
+		Collections.reverse(arrUploadDate);	
+		Collections.reverse(arrUploadName);	
 		
+		// 이미지 옵션.
 		options = new DisplayImageOptions.Builder()
-		.showImageOnLoading(R.drawable.ic_stub)
-		.showImageForEmptyUri(R.drawable.ic_empty)
-		.showImageOnFail(R.drawable.ic_error)
+		.showImageOnLoading(R.drawable.img_round_progress)
+		.showImageForEmptyUri(R.drawable.img_empty)
+		.showImageOnFail(R.drawable.img_empty)
 		.cacheInMemory(true)
 		.cacheOnDisk(true)
 		.considerExifParams(true)
 		.bitmapConfig(Bitmap.Config.RGB_565)
 		.build();
 		
-		listView = (GridView) getView().findViewById(R.id.gridview);
-		customGridAdapter= new DiscoverGridViewAdapter(this.getActivity().getApplicationContext(), imageLoader, arrImages, options);
+		listView = (GridView) getView().findViewById(R.id.gridview); // 리스트뷰 아이디
+		
+		// 갤러리에 각 이미지 리스트 등을 세팅.
+		customGridAdapter= new DiscoverGridViewAdapter(this.getActivity().getApplicationContext(), imageLoader, arrImages, options, arrUploadName, arrUploadDate);
 		((GridView) listView).setAdapter(customGridAdapter);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-			{			
-				//startImagePagerActivity(position);
+			{
+				//TODO : 이 쪽에서 각 이미지 썸네일을 클릭했을 때의 이벤트 입력.
+				startImagePagerActivity(position);
 			}
 		});
-		
-		
 
 		super.onStart();
+	}
+	
+	
+	private void startImagePagerActivity(int position)
+	{
+		// discover pager로 이미지 리스트와 포지션을 함께 넘김.
+		Intent intent = new Intent(getActivity().getApplicationContext(), URLImagePagerActivity.class);
 		
+		// convert ArrayList<String> to String[]
+		String[] arrURLs= new String[arrImages.size()];
+		arrURLs= arrImages.toArray(arrURLs);
+		
+		intent.putExtra(Extra.IMAGES, arrURLs);
+		intent.putExtra(Extra.IMAGES_AUTHOR, arrUploadName);
+		intent.putExtra(Extra.IMAGES_CREATE_DATE, arrUploadDate);
+		intent.putExtra(Extra.IMAGE_POSITION, position);
+		startActivity(intent);
 	}
 	
 //	private void startImagePagerActivity(int position)
@@ -99,22 +126,30 @@ public class DiscoverGalleryFragment extends Fragment
 //		startActivity(intent);
 //	}
 	
+	// Parse 서버로부터 사진들의 url 경로들을 가져온다.
 	protected ArrayList<String> getData()
 	{
+		arrUploadDate.clear();
+		arrUploadName.clear();
 		final ArrayList<String> arrPicList= new ArrayList<String>();
 		
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Pictures");
-		query.whereEqualTo("Name", "Anonymous");
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Pictures");	// Pictures 데이터 테이블 중에서
+		query.whereEqualTo("Name", "Anonymous");	// 이름이 Anonymous인 것만 가져온다.
 		try
 		{
 			List<ParseObject> picList= query.find();
             for(ParseObject p : picList)
             {
-            	ParseFile file= (ParseFile) p.get("Picture");
+            	ParseFile file= (ParseFile) p.get("Picture");	// Pictures 테이블 안의 Picture file.
+            	Date date= p.getCreatedAt();		// 이 파일이 생성된 날짜
+            	String name= p.getString("Name");	// 이 파일을 올린 유저 이름.
             	if(file != null)
             	{
-            		//ImageItem item= new ImageItem(file.getUrl());
-            		arrPicList.add(file.getUrl());		             	
+            		arrPicList.add(file.getUrl());
+            		
+            		SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
+            		arrUploadDate.add(format.format(date));
+            		arrUploadName.add(name);
             	}
             }
 			
