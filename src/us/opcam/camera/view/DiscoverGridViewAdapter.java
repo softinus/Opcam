@@ -94,7 +94,9 @@ public class DiscoverGridViewAdapter extends BaseAdapter
 		loader.displayImage(arrImages.get(position), holder.imageView, options, new SimpleImageLoadingListener()
 		{
 									 @Override
-									 public void onLoadingStarted(String imageUri, View view) {
+									 public void onLoadingStarted(String imageUri, View view)
+									 {
+										 holder.imageView.setVisibility(View.INVISIBLE);
 										 holder.progressBar.setProgress(0);
 										 holder.progressBar.setVisibility(View.VISIBLE);
 									 }
@@ -102,20 +104,23 @@ public class DiscoverGridViewAdapter extends BaseAdapter
 									 @Override
 									 public void onLoadingFailed(String imageUri, View view,
 											 FailReason failReason) {
+										 holder.imageView.setVisibility(View.VISIBLE);
 										 holder.progressBar.setVisibility(View.GONE);
 									 }
 
 									 @Override
-									 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+									 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage)
+									 {
+										 holder.imageView.setVisibility(View.VISIBLE);
 										 holder.progressBar.setVisibility(View.GONE);
 									 }
-								 }, new ImageLoadingProgressListener() {
-									 @Override
-									 public void onProgressUpdate(String imageUri, View view, int current,
-											 int total) {
-										 holder.progressBar.setProgress(Math.round(100.0f * current / total));
-									 }
-								 }
+		 }, new ImageLoadingProgressListener() {
+			 @Override
+			 public void onProgressUpdate(String imageUri, View view, int current,
+					 int total) {
+				 holder.progressBar.setProgress(Math.round(100.0f * current / total));
+			 }
+		 }
 		);
 
 		return view;

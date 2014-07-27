@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <application
-        android:name="us.opcam.camera.activity.OpcamApp"
+        android:name=".activity.OpcamApp"
         android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
@@ -14,7 +14,7 @@
             android:value="7c77fe1ad9f85a30" />
 
         <activity
-            android:name="us.opcam.camera.activity.CameraPreview2"
+            android:name=".activity.CameraPreview2"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -24,12 +24,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="us.opcam.camera.activity.SettingsActivity"
+            android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="us.opcam.camera.activity.GalleryActivity"
+            android:name=".activity.GalleryActivity"
             android:label="@string/title_activity_gallery"
             android:screenOrientation="portrait" >
         </activity>
@@ -44,7 +44,7 @@
             android:screenOrientation="unspecified"
             android:theme="@style/AviaryTheme" />
         <activity
-            android:name="us.opcam.camera.activity.SNSShareActivity"
+            android:name=".activity.SNSShareActivity"
             android:label="@string/title_activity_snsshare"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
@@ -81,7 +81,7 @@
         <!--
         Cds Content Provider, 
         NOTE that the "authorities" value MUST be formatted in this way:
-        android:authorities="{your.packagename}.AviaryCdsProvider"
+        android:authorities="{your.packagename}.AviaryCdsProvider"
         -->
         <provider
             android:name="com.aviary.android.feather.cds.AviaryCdsProvider"
@@ -102,22 +102,36 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
-
         <activity
-            android:name="us.opcam.camera.activity.ImageZoomActivity"
+            android:name=".activity.ImageZoomActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_image_zoom"
             android:theme="@style/FullscreenTheme" >
         </activity>
-        <activity android:name="us.opcam.camera.activity.ImageZoomPagerActivity" />
+        <activity android:name=".activity.LocalImageZoomPagerActivity" />
         <activity
-            android:name="us.opcam.camera.activity.GalleryTabsActivity"
+            android:name=".activity.GalleryTabsActivity"
             android:label="@string/title_activity_gallery_tabs" >
+        </activity>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
+        <activity
+            android:name="us.opcam.camera.activity.SignActivity"
+            android:label="@string/title_activity_sign"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateVisible"  >
+        </activity>
+        <activity
+            android:name=".activity.URLImagePagerActivity">
         </activity>
     </application>
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="13"
         android:targetSdkVersion="18" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -127,5 +141,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
 </manifest>

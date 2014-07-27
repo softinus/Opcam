@@ -38,6 +38,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 /**
@@ -136,16 +137,17 @@ public class URLImagePagerActivity extends Activity
 			ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
 			TextView txtName = (TextView) imageLayout.findViewById(R.id.txt_name);
 			TextView txtDate = (TextView) imageLayout.findViewById(R.id.txt_date);
-			final ProgressBar spinner = (ProgressBar) imageLayout.findViewById(R.id.loading);
+			final ProgressBar progress = (ProgressBar) imageLayout.findViewById(R.id.loading);
 			
 			txtName.setText(arrName.get(position));	// 이미지 작성자 이름과 날짜를 띄워준다.
 			txtDate.setText(arrDate.get(position));
 
-			imageLoader.displayImage(images[position], imageView, options, new SimpleImageLoadingListener() {
+			imageLoader.displayImage(images[position], imageView, options, new SimpleImageLoadingListener()
+			{
 				@Override
 				public void onLoadingStarted(String imageUri, View view)
 				{
-					spinner.setVisibility(View.VISIBLE);
+					progress.setVisibility(View.VISIBLE);
 				}
 
 				@Override
@@ -172,15 +174,23 @@ public class URLImagePagerActivity extends Activity
 					}
 					Toast.makeText(URLImagePagerActivity.this, message, Toast.LENGTH_SHORT).show();
 
-					spinner.setVisibility(View.GONE);
+					progress.setVisibility(View.GONE);
 				}
 
 				@Override
 				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage)
 				{
-					spinner.setVisibility(View.GONE);
+					progress.setVisibility(View.GONE);
 				}
-			});
+			 }, new ImageLoadingProgressListener()
+			 {
+				 @Override
+				 public void onProgressUpdate(String imageUri, View view, int current,
+						 int total) {
+					 progress.setProgress(Math.round(100.0f * current / total));
+				 }
+			 }
+			);
 
 			view.addView(imageLayout, 0);
 			return imageLayout;
