@@ -8,6 +8,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.parse.Parse;
+import com.parse.ParseFacebookUtils;
 import com.sromku.simple.fb.Permission;
 import com.sromku.simple.fb.SimpleFacebook;
 import com.sromku.simple.fb.SimpleFacebookConfiguration;
@@ -48,6 +49,7 @@ public class OpcamApp extends Application
 		
 		{	// parse init
 			Parse.initialize(this, "5qeL512r6WzBuHnxGhMKLNNj0tUCBAI26FPN4TRl", "V2mAVufHvtdaTwlas4LANYSJoQbdFrcAomBRcOL7");
+			ParseFacebookUtils.initialize("193443224183217");
 		}
 		
 		{

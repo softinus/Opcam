@@ -1,33 +1,30 @@
 package us.opcam.camera.activity;
 
 import us.opcam.camera.R;
-import us.opcam.camera.R.id;
-import us.opcam.camera.R.layout;
-import us.opcam.camera.R.string;
 import us.opcam.camera.util.SPUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-public class SignActivity extends Activity
+public class SignActivity extends Activity implements OnClickListener
 {
+
 	private ProgressDialog LoadingDL;	// 프로그레스 다이어로그
 	
 	String mEmail="";
@@ -50,41 +47,69 @@ public class SignActivity extends Activity
 		BTN_facebook= (Button) findViewById(R.id.btn_login_passport_facebook);
 		BTN_kakao= (Button) findViewById(R.id.btn_login_passport_kakao);
 		
-		BTN_sign.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				attemptLogin();
-			}
-		});
-		
-		BTN_facebook.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
-				Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
-				startActivity(intent);
-				finish();
-			}
-		});
-		
-		BTN_kakao.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View view)
-			{
-				SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
-				Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
-				startActivity(intent);
-				finish();
-			}
-		});
-		
+		BTN_sign.setOnClickListener(this);
+		BTN_facebook.setOnClickListener(this);
+		BTN_kakao.setOnClickListener(this);
 		
 	}
 	
+
+	@Override
+	public void onClick(View v)
+	{
+		
+		if(v.getId() == R.id.btn_login_passport_facebook)
+		{
+			ParseFacebookUtils.logIn(this, new LogInCallback()
+			{
+				  @Override
+				  public void done(ParseUser user, ParseException err)
+				  {
+				    if (user == null) {
+				    	ShowAlertDialog("User cancelled", "Uh oh. The user cancelled the Facebook login.", "Ok");
+				    }
+				    else if (user.isNew())
+				    {
+				    	ShowAlertDialog("Successful", "User signed up and logged in through Facebook!\n"+user.getUsername()+"\n"+user.getEmail(), "Ok");
+						SPUtil.putString(getApplicationContext(), "my_id", user.getEmail());
+						Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+						startActivity(intent);
+						finish();
+				    }
+				    else
+				    {
+				    	ShowAlertDialog("Successful", "User logged in through Facebook!\n"+user.getUsername()+"\n"+user.getEmail(), "Ok");
+						SPUtil.putString(getApplicationContext(), "my_id", user.getEmail());
+						Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+						startActivity(intent);
+						finish();
+				    }
+				  }
+			});
+		}
+		else if(v.getId() == R.id.btn_login_passport_kakao)
+		{
+
+			SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
+			Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+			startActivity(intent);
+			finish();
+		}
+		else if(v.getId() == R.id.btn_email_sign_in_button)
+		{
+			attemptLogin();
+		}
+		
+	}
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		ParseFacebookUtils.finishAuthentication(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
 	
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
@@ -187,6 +212,8 @@ public class SignActivity extends Activity
 		}
 	}
 	
+	
+	
 	// 로딩 프로그레스 부분을 모두 핸들러로 관리한다.
 	public Handler LoadingHandler = new Handler()
 	{
@@ -251,6 +278,9 @@ public class SignActivity extends Activity
 		.create()
 		.show();
 	}
+
+
+
 	
 	
 	

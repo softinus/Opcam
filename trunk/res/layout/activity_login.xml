@@ -158,7 +158,7 @@
 		        />
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/btn_email_sign_in_button"
                 android:layout_below="@+id/txt_password"
                 android:layout_marginTop="10dp"
                 android:background="#ff666262"
@@ -170,7 +170,7 @@
 				
 			<Button
                 android:id="@+id/forgot_id_pw"
-                android:layout_below="@+id/email_sign_in_button"
+                android:layout_below="@+id/btn_email_sign_in_button"
                 android:layout_marginTop="5dp"
                 android:background="#00000000"
                 android:textColor="#ffa9a9a9"
