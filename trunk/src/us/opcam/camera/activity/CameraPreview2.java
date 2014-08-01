@@ -72,7 +72,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	protected void onCreate(Bundle savedInstanceState)
     {
     	mContext= this.getApplicationContext();
-    	String myID= SPUtil.getString(mContext, "my_id");
+    	String myID= SPUtil.getString(mContext, us.opcam.camera.util.Constants.Extra.MY_EMAIL);
     	
     	if(myID == null)
     	{

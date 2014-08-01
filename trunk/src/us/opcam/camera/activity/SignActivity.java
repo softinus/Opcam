@@ -5,17 +5,21 @@ import us.opcam.camera.util.SPUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
+import com.androidquery.util.Constants;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -60,29 +64,37 @@ public class SignActivity extends Activity implements OnClickListener
 		
 		if(v.getId() == R.id.btn_login_passport_facebook)
 		{
+			LoadingHandler.sendEmptyMessage(0);
+			
 			ParseFacebookUtils.logIn(this, new LogInCallback()
-			{
+			{				  
 				  @Override
 				  public void done(ParseUser user, ParseException err)
 				  {
-				    if (user == null) {
-				    	ShowAlertDialog("User cancelled", "Uh oh. The user cancelled the Facebook login.", "Ok");
+				    if (user == null)
+				    {
+				    	ShowAlertDialog("User cancelled", "Uh oh. The user cancelled the Facebook login.\n\n"+err.toString(), "Ok");
 				    }
 				    else if (user.isNew())
 				    {
-				    	ShowAlertDialog("Successful", "User signed up and logged in through Facebook!\n"+user.getUsername()+"\n"+user.getEmail(), "Ok");
-						SPUtil.putString(getApplicationContext(), "my_id", user.getEmail());
-						Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
-						startActivity(intent);
-						finish();
+				    	ShowAlertDialog("Successful", "User signed up and logged in through Facebook!", "Ok");
+
+				    	if(user.getEmail() == null)
+				    	{
+				    		LoadingHandler.sendEmptyMessage(-1);
+				    		ShowInputDialog(user);
+				    	}
 				    }
 				    else
 				    {
-				    	ShowAlertDialog("Successful", "User logged in through Facebook!\n"+user.getUsername()+"\n"+user.getEmail(), "Ok");
-						SPUtil.putString(getApplicationContext(), "my_id", user.getEmail());
-						Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
-						startActivity(intent);
-						finish();
+				    	if(user.getEmail() == null)
+				    	{
+				    		LoadingHandler.sendEmptyMessage(-1);
+				    		ShowInputDialog(user);
+				    	}
+//						Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+//						startActivity(intent);
+//						finish();
 				    }
 				  }
 			});
@@ -221,7 +233,7 @@ public class SignActivity extends Activity implements OnClickListener
 		{
 			if(msg.what==-1)
 			{
-				
+				LoadingDL.hide();
 			}
 			if(msg.what==0)
 			{
@@ -267,6 +279,15 @@ public class SignActivity extends Activity implements OnClickListener
 		return password.length() > 4;
 	}
 	
+	// check nickname lenght
+	private boolean isNickNameVaild(String nick)
+	{
+		if(nick.length() > 4)
+		{
+			return false;
+		}
+		return true;
+	}
 	
 	private void ShowAlertDialog(String strTitle, String strContent, String strButton)
 	{
@@ -280,6 +301,77 @@ public class SignActivity extends Activity implements OnClickListener
 	}
 
 
+	private void ShowInputDialog(final ParseUser user)
+	{
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+		alert.setTitle("Please input your email and nickname.");
+		alert.setMessage("In order to reset your password, please enter the email you used to register for Opcam.");
+
+		// Set an EditText view to get user input
+		LinearLayout layout = new LinearLayout(this);
+		layout.setOrientation(LinearLayout.VERTICAL);
+
+		 InputFilter[] filter30 = new InputFilter[1];
+		 filter30[0] = new InputFilter.LengthFilter(30);
+		 
+		 InputFilter[] filter10 = new InputFilter[1];
+		 filter10[0] = new InputFilter.LengthFilter(10);
+		 
+		final EditText emailBox = new EditText(this);
+		emailBox.setSingleLine();
+		emailBox.setHint("E-mail");
+		emailBox.setFilters(filter30);
+		layout.addView(emailBox);
+
+		final EditText nicknameBox = new EditText(this);
+		nicknameBox.setSingleLine();
+		nicknameBox.setFilters(filter10);
+		nicknameBox.setHint("Nickname (4~10 words)");
+		layout.addView(nicknameBox);
+
+		alert.setView(layout);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface dialog, int whichButton)
+			{
+				String email = emailBox.getText().toString();
+				String nick= nicknameBox.getText().toString();
+				if( isEmailValid(email) && isNickNameVaild(nick) )
+				{
+					try
+					{
+						user.setEmail(email);
+						user.put("nick", nick);
+						user.save();
+					} catch (ParseException e) {
+						ShowAlertDialog("Error ouccurred", e.toString(), "Ok");
+						return;
+					}
+					SPUtil.putString(getApplicationContext(), us.opcam.camera.util.Constants.Extra.MY_EMAIL, email);	// email 을 shared preference 에 넣어준다.
+					SPUtil.putString(getApplicationContext(), us.opcam.camera.util.Constants.Extra.MY_NICK, nick);	// nickname 을 shared preference 에 넣어준다.
+					Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+					startActivity(intent);
+					finish();
+				}
+				else
+				{
+					ShowAlertDialog("Error", "email or nick is invaild.", "Ok");
+				}
+			}
+		});
+
+
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						// Canceled.
+					}
+				});
+		
+		alert.show(); 
+	}
 
 	
 	
