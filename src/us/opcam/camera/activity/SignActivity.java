@@ -261,6 +261,11 @@ public class SignActivity extends Activity implements OnClickListener
 				LoadingDL.hide();
 				ShowAlertDialog("Sign in", "Failed!", "Ok");
 			}
+			if(msg.what==5)
+			{
+				LoadingDL.setMessage("Updating information...");
+		        LoadingDL.show();
+			}
 		}
 	};
 	
@@ -312,11 +317,12 @@ public class SignActivity extends Activity implements OnClickListener
 		LinearLayout layout = new LinearLayout(this);
 		layout.setOrientation(LinearLayout.VERTICAL);
 
-		 InputFilter[] filter30 = new InputFilter[1];
-		 filter30[0] = new InputFilter.LengthFilter(30);
+		// letter length filter
+		InputFilter[] filter30 = new InputFilter[1];
+		filter30[0] = new InputFilter.LengthFilter(30);
 		 
-		 InputFilter[] filter10 = new InputFilter[1];
-		 filter10[0] = new InputFilter.LengthFilter(10);
+		InputFilter[] filter10 = new InputFilter[1];
+		filter10[0] = new InputFilter.LengthFilter(10);
 		 
 		final EditText emailBox = new EditText(this);
 		emailBox.setSingleLine();
@@ -340,15 +346,18 @@ public class SignActivity extends Activity implements OnClickListener
 				String nick= nicknameBox.getText().toString();
 				if( isEmailValid(email) && isNickNameVaild(nick) )
 				{
+					LoadingHandler.sendEmptyMessage(5);	// updating information...
 					try
 					{
 						user.setEmail(email);
 						user.put("nick", nick);
 						user.save();
 					} catch (ParseException e) {
+						LoadingHandler.sendEmptyMessage(-1);
 						ShowAlertDialog("Error ouccurred", e.toString(), "Ok");
 						return;
 					}
+					LoadingHandler.sendEmptyMessage(-1);
 					SPUtil.putString(getApplicationContext(), us.opcam.camera.util.Constants.Extra.MY_EMAIL, email);	// email 을 shared preference 에 넣어준다.
 					SPUtil.putString(getApplicationContext(), us.opcam.camera.util.Constants.Extra.MY_NICK, nick);	// nickname 을 shared preference 에 넣어준다.
 					Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
