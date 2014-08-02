@@ -1,7 +1,5 @@
 package us.opcam.camera.activity;
 
-import java.util.Locale;
-
 import us.opcam.camera.R;
 import us.opcam.camera.view.DiscoverGalleryFragment;
 import us.opcam.camera.view.LocalGalleryFragment;
@@ -15,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 public class GalleryTabsActivity extends FragmentActivity
@@ -114,6 +113,31 @@ public class GalleryTabsActivity extends FragmentActivity
 //		gridView.setAdapter(customGridAdapter);
 		
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) 
+	{
+	     
+	    switch(item.getItemId())
+	    {
+	         
+	    case R.id.actionbar_camera:
+	    	this.GotoCameraActivity();	// 카메라 버튼을 누르면 카메라 찍는 화면으로 넘어간다.
+	        break;
+	         
+	    default:
+	        return false;
+	    }
+	    return true;
+	}
+	
+	
+	public void GotoCameraActivity()
+	{
+		Intent intent= new Intent(GalleryTabsActivity.this, CameraPreview2.class);
+		startActivity(intent);
+		this.finish();
 	}
 	
 	

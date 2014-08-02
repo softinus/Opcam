@@ -1,5 +1,6 @@
 package us.opcam.camera.activity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,6 +42,8 @@ import android.widget.Toast;
 
 import com.aviary.android.feather.FeatherActivity;
 import com.aviary.android.feather.library.Constants;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 
 public class CameraPreview2 extends Activity implements OnClickListener
 {   
@@ -158,6 +161,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	            bSkipShare= SPUtil.getBoolean(mContext, "process_skip_share_step"); // 키값, 디폴트값
 	            
 	            uCurrentPhoto= SaveBitmapFile();
+	            ShareToOpcamServer();	// 찍으면 바로 올린다.
 	            
 	            //GotoAviary(uCurrentPhoto);
 	            if(bSkipEffect)	// effect 생략,
@@ -197,7 +201,37 @@ public class CameraPreview2 extends Activity implements OnClickListener
         this.RefreshAllView();
     }
     
-
+	/**
+	 * opcam server upload
+	 */
+	public void ShareToOpcamServer()
+	{
+		if(uCurrentPhoto == null)
+			return;
+		
+		Bitmap bmp = null;
+		try {
+			bmp = Images.Media.getBitmap(getContentResolver(), uCurrentPhoto);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ByteArrayOutputStream stream = new ByteArrayOutputStream() ;  
+		bmp.compress( CompressFormat.JPEG, 100, stream) ;  
+        byte[] byteArray = stream.toByteArray() ;  
+		
+		ParseFile file = new ParseFile("photo.jpg", byteArray);
+		file.saveInBackground();
+		
+		ParseObject picApplication = new ParseObject("Pictures");
+		picApplication.put("Name", SPUtil.getString(this, us.opcam.camera.util.Constants.Extra.MY_NICK));
+		picApplication.put("Picture", file);
+		picApplication.saveInBackground();
+	}
 
 	@Override
 	public void onClick(View v)

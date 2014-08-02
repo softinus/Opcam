@@ -102,6 +102,8 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id" />
+        
+        
         <activity
             android:name=".activity.ImageZoomActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -128,6 +130,16 @@
         <activity
             android:name=".activity.URLImagePagerActivity">
         </activity>
+        
+        <!-- for kakao API -->
+        <activity
+        android:name="com.kakao.LoginActivity"
+        android:configChanges="orientation|screenSize">            
+        </activity>
+        
+        <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key"/>        
+        <!-- kakao end -->
+        
     </application>
 
     <uses-sdk
