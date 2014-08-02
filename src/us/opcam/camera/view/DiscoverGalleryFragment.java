@@ -134,7 +134,7 @@ public class DiscoverGalleryFragment extends Fragment
 		final ArrayList<String> arrPicList= new ArrayList<String>();
 		
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Pictures");	// Pictures 데이터 테이블 중에서
-		query.whereEqualTo("Name", "Anonymous");	// 이름이 Anonymous인 것만 가져온다.
+		//query.whereEqualTo("Name", "Anonymous");	// 이름이 Anonymous인 것만 가져온다.
 		try
 		{
 			List<ParseObject> picList= query.find();

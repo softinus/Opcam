@@ -12,14 +12,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.androidquery.util.Constants;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -36,6 +34,9 @@ public class SignActivity extends Activity implements OnClickListener
 
 	Button BTN_sign, BTN_facebook, BTN_kakao;
 	EditText EDT_id, EDT_pw;
+	
+//	private LoginButton loginButton;
+//    private final SessionCallback mySessionCallback = new MySessionStatusCallback();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -47,16 +48,36 @@ public class SignActivity extends Activity implements OnClickListener
 		
 		EDT_id= (EditText) findViewById(R.id.txt_email);
 		EDT_pw= (EditText) findViewById(R.id.txt_password);
-		BTN_sign= (Button) findViewById(R.id.email_sign_in_button);
+		BTN_sign= (Button) findViewById(R.id.btn_email_sign_in_button);
 		BTN_facebook= (Button) findViewById(R.id.btn_login_passport_facebook);
-		BTN_kakao= (Button) findViewById(R.id.btn_login_passport_kakao);
-		
+		BTN_kakao= (Button) findViewById(R.id.btn_login_passport_kakao);		
+        
 		BTN_sign.setOnClickListener(this);
 		BTN_facebook.setOnClickListener(this);
 		BTN_kakao.setOnClickListener(this);
+
+//		// 로그인 버튼에 로그인 결과를 받을 콜백을 설정한다.
+//        loginButton = (LoginButton) findViewById(R.id.img_login_passport_kakao);
+//        loginButton.setLoginSessionCallback(mySessionCallback);
 		
 	}
 	
+//	@Override
+//    protected void onResume()
+//	{
+//        super.onResume();
+//        // 세션을 초기화 한다
+//        if(Session.initializeSession(this, mySessionCallback))
+//        {
+//            // 1. 세션을 갱신 중이면, 프로그레스바를 보이거나 버튼을 숨기는 등의 액션을 취한다
+//            loginButton.setVisibility(View.GONE);
+//        } else if (Session.getCurrentSession().isOpened())
+//        {
+//            // 2. 세션이 오픈된된 상태이면, 다음 activity로 이동한다.
+//            onSessionOpened();
+//        }
+//            // 3. else 로그인 창이 보인다.
+//    }
 
 	@Override
 	public void onClick(View v)
@@ -82,7 +103,7 @@ public class SignActivity extends Activity implements OnClickListener
 				    	if(user.getEmail() == null)
 				    	{
 				    		LoadingHandler.sendEmptyMessage(-1);
-				    		ShowInputDialog(user);
+				    		ShowInputDialog(user,"","");
 				    	}
 				    }
 				    else
@@ -90,7 +111,7 @@ public class SignActivity extends Activity implements OnClickListener
 				    	if(user.getEmail() == null)
 				    	{
 				    		LoadingHandler.sendEmptyMessage(-1);
-				    		ShowInputDialog(user);
+				    		ShowInputDialog(user,"","");
 				    	}
 //						Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
 //						startActivity(intent);
@@ -101,11 +122,11 @@ public class SignActivity extends Activity implements OnClickListener
 		}
 		else if(v.getId() == R.id.btn_login_passport_kakao)
 		{
-
-			SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
-			Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
-			startActivity(intent);
-			finish();
+//
+//			SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
+//			Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+//			startActivity(intent);
+//			finish();
 		}
 		else if(v.getId() == R.id.btn_email_sign_in_button)
 		{
@@ -113,6 +134,35 @@ public class SignActivity extends Activity implements OnClickListener
 		}
 		
 	}
+	
+//	protected void onSessionOpened()
+//	{
+//		SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
+//		Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+//		startActivity(intent);
+//		finish();
+//    }
+//	
+//	private class MySessionStatusCallback implements SessionCallback
+//	{
+//        @Override
+//        public void onSessionOpened()
+//        {
+//            // 프로그레스바를 보이고 있었다면 중지하고 세션 오픈후 보일 페이지로 이동
+//        	SignActivity.this.onSessionOpened();
+//        }
+//
+//
+//		@Override
+//		public void onSessionClosed(KakaoException exception)
+//		{
+//            // 프로그레스바를 보이고 있었다면 중지하고 세션 오픈을 못했으니 다시 로그인 버튼 노출.
+//            loginButton.setVisibility(View.VISIBLE);
+//			
+//		}
+//
+//    }
+
 	
 	
 	@Override
@@ -178,11 +228,12 @@ public class SignActivity extends Activity implements OnClickListener
 	}
 
 
+	// 사인업 요청.
 	private void SignupRequest()
 	{
 		try
 		{
-			ParseUser user = new ParseUser();
+			final ParseUser user = new ParseUser();
 			user.setUsername(mEmail);
 			user.setPassword(mPassword);
 			user.setEmail(mEmail);
@@ -196,7 +247,8 @@ public class SignActivity extends Activity implements OnClickListener
 			  {
 			    if (e == null)
 			    {				
-			    	LoadingHandler.sendEmptyMessage(1);	// sign up finish
+			    	LoadingHandler.sendEmptyMessage(-1);	// sign up finish
+			    	ShowInputDialog(user,mEmail,"");
 			    } else {
 			    	LoadingHandler.sendEmptyMessage(2);	// goto sign in ...
 			    	
@@ -204,10 +256,35 @@ public class SignActivity extends Activity implements OnClickListener
 			    	{
 		    		  public void done(ParseUser user, ParseException e)
 		    		  {
-		    		    if (user != null)
+		    		    if (user != null)	// 로그인 성공하면
 		    		    {
-		    		    	LoadingHandler.sendEmptyMessage(3);
-		    		    } else {
+		    		    	LoadingHandler.sendEmptyMessage(-1);
+		    		    	if(user.getEmail()==null)
+		    		    	{
+		    		    		ShowInputDialog(user,"",user.get("nick").toString());
+		    		    	}
+		    		    	else if(user.getEmail().equals(""))	// 이메일이 없으면
+		    		    	{	
+		    		    		ShowInputDialog(user,"",user.get("nick").toString()); 
+		    		    	}
+		    		    	else if(user.get("nick")==null)
+		    		    	{
+		    		    		ShowInputDialog(user,mEmail, ""); 
+		    		    	}
+		    		    	else if(user.get("nick").toString().equals(""))
+		    		    	{
+		    		    		ShowInputDialog(user,mEmail, "");
+		    		    	}
+		    		    	else	// 로그인 했는데 이메일과 닉네임 둘 다 있으면...
+		    		    	{
+
+		    					SPUtil.putString(getApplicationContext(), us.opcam.camera.util.Constants.Extra.MY_EMAIL, user.getEmail());	// email 을 shared preference 에 넣어준다.
+		    					SPUtil.putString(getApplicationContext(), us.opcam.camera.util.Constants.Extra.MY_NICK, user.get("nick").toString());	// nickname 을 shared preference 에 넣어준다.
+		    		    		Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+		    					startActivity(intent);
+		    					finish();
+		    		    	}
+	    		    	} else {
 		    		      // Signup failed. Look at the ParseException to see what happened.
 		    		    	LoadingHandler.sendEmptyMessage(4);
 		    		    }
@@ -259,7 +336,7 @@ public class SignActivity extends Activity implements OnClickListener
 			if(msg.what==4)
 			{
 				LoadingDL.hide();
-				ShowAlertDialog("Sign in", "Failed!", "Ok");
+				ShowAlertDialog("Sign in", "Incorrect login or password.", "Ok");
 			}
 			if(msg.what==5)
 			{
@@ -287,7 +364,7 @@ public class SignActivity extends Activity implements OnClickListener
 	// check nickname lenght
 	private boolean isNickNameVaild(String nick)
 	{
-		if(nick.length() > 4)
+		if(nick.length() <= 4)
 		{
 			return false;
 		}
@@ -306,12 +383,26 @@ public class SignActivity extends Activity implements OnClickListener
 	}
 
 
-	private void ShowInputDialog(final ParseUser user)
+	private void ShowInputDialog(final ParseUser user, String email, String nick)
 	{
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-		alert.setTitle("Please input your email and nickname.");
-		alert.setMessage("In order to reset your password, please enter the email you used to register for Opcam.");
+		if(!email.equals(""))	// 이멜이 이미 들어왔으면
+		{
+			alert.setTitle("Please input your nickname.");
+			alert.setMessage("Nickname is in order to used in your activity.");
+		}
+		else if(!nick.equals(""))	// 닉넴만 이미 들어왔으면
+		{
+			alert.setTitle("Please input your email.");
+			alert.setMessage("In order to reset your password, please enter the email you used to register for Opcam.");
+		}
+		else
+		{
+			alert.setTitle("Please input your email and nickname.");
+			alert.setMessage("In order to reset your password, please enter the email you used to register for Opcam.");
+		}
+		
 
 		// Set an EditText view to get user input
 		LinearLayout layout = new LinearLayout(this);
@@ -326,14 +417,24 @@ public class SignActivity extends Activity implements OnClickListener
 		 
 		final EditText emailBox = new EditText(this);
 		emailBox.setSingleLine();
+		if(!email.equals(""))	// 기본값 있으면 고정 세팅
+		{
+			emailBox.setText(email);
+			emailBox.setEnabled(false);
+		}		
 		emailBox.setHint("E-mail");
 		emailBox.setFilters(filter30);
 		layout.addView(emailBox);
 
 		final EditText nicknameBox = new EditText(this);
 		nicknameBox.setSingleLine();
-		nicknameBox.setFilters(filter10);
+		if(!nick.equals(""))	// 기본값 있으면 고정 세팅
+		{
+			nicknameBox.setText(nick);
+			nicknameBox.setEnabled(false);
+		}
 		nicknameBox.setHint("Nickname (4~10 words)");
+		nicknameBox.setFilters(filter10);
 		layout.addView(nicknameBox);
 
 		alert.setView(layout);

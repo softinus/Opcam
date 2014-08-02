@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import us.opcam.camera.R;
+import us.opcam.camera.util.Constants;
+import us.opcam.camera.util.SPUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -138,7 +140,7 @@ public class SNSShareActivity extends Activity
 		file.saveInBackground();
 		
 		ParseObject picApplication = new ParseObject("Pictures");
-		picApplication.put("Name", "Anonymous");
+		picApplication.put("Name", SPUtil.getString(this, Constants.Extra.MY_NICK));
 		picApplication.put("Picture", file);
 		picApplication.saveInBackground();
 	}
@@ -154,7 +156,7 @@ public class SNSShareActivity extends Activity
 		
 		bSharing= true;
 		
-		ShareToOpcamServer();
+		//ShareToOpcamServer();
 		
 		// Image를 전송할 때 
 		Intent intent = new Intent(Intent.ACTION_SEND); 
