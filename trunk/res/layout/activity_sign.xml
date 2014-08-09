@@ -93,7 +93,7 @@
                 android:layout_width="150dp"
                 android:layout_height="35dp"/>
 			   	
-				<ImageView
+				<com.kakao.widget.LoginButton
 		        android:id="@+id/img_login_passport_kakao"
 		        android:src="@drawable/s_icon_talk"
 		        android:layout_below="@+id/login_logo"		        

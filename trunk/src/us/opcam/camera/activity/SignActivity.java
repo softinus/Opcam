@@ -5,6 +5,7 @@ import us.opcam.camera.util.SPUtil;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +18,16 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.kakao.APIErrorResult;
+import com.kakao.KakaoTalkHttpResponseHandler;
+import com.kakao.KakaoTalkProfile;
+import com.kakao.KakaoTalkService;
+import com.kakao.Session;
+import com.kakao.SessionCallback;
+import com.kakao.exception.KakaoException;
+import com.kakao.widget.LoginButton;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -26,7 +36,7 @@ import com.parse.SignUpCallback;
 
 public class SignActivity extends Activity implements OnClickListener
 {
-
+	Context mContext= null;
 	private ProgressDialog LoadingDL;	// 프로그레스 다이어로그
 	
 	String mEmail="";
@@ -35,14 +45,16 @@ public class SignActivity extends Activity implements OnClickListener
 	Button BTN_sign, BTN_facebook, BTN_kakao;
 	EditText EDT_id, EDT_pw;
 	
-//	private LoginButton loginButton;
-//    private final SessionCallback mySessionCallback = new MySessionStatusCallback();
+	private LoginButton loginButton;
+	private final SessionCallback mySessionCallback = new MySessionStatusCallback();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sign);
+		
+		mContext= this.getApplicationContext();
 		
 		LoadingDL = new ProgressDialog(this);
 		
@@ -56,28 +68,28 @@ public class SignActivity extends Activity implements OnClickListener
 		BTN_facebook.setOnClickListener(this);
 		BTN_kakao.setOnClickListener(this);
 
-//		// 로그인 버튼에 로그인 결과를 받을 콜백을 설정한다.
-//        loginButton = (LoginButton) findViewById(R.id.img_login_passport_kakao);
-//        loginButton.setLoginSessionCallback(mySessionCallback);
+		// 로그인 버튼에 로그인 결과를 받을 콜백을 설정한다.
+        loginButton = (LoginButton) findViewById(R.id.img_login_passport_kakao);
+        loginButton.setLoginSessionCallback(mySessionCallback);
 		
 	}
 	
-//	@Override
-//    protected void onResume()
-//	{
-//        super.onResume();
-//        // 세션을 초기화 한다
-//        if(Session.initializeSession(this, mySessionCallback))
-//        {
-//            // 1. 세션을 갱신 중이면, 프로그레스바를 보이거나 버튼을 숨기는 등의 액션을 취한다
-//            loginButton.setVisibility(View.GONE);
-//        } else if (Session.getCurrentSession().isOpened())
-//        {
-//            // 2. 세션이 오픈된된 상태이면, 다음 activity로 이동한다.
-//            onSessionOpened();
-//        }
-//            // 3. else 로그인 창이 보인다.
-//    }
+	@Override
+    protected void onResume()
+	{
+        super.onResume();
+        // 세션을 초기화 한다
+        if(Session.initializeSession(this, mySessionCallback))
+        {
+            // 1. 세션을 갱신 중이면, 프로그레스바를 보이거나 버튼을 숨기는 등의 액션을 취한다
+            loginButton.setVisibility(View.GONE);
+        } else if (Session.getCurrentSession().isOpened())
+        {
+            // 2. 세션이 오픈된된 상태이면, 다음 activity로 이동한다.
+            onSessionOpened();
+        }
+            // 3. else 로그인 창이 보인다.
+    }
 
 	@Override
 	public void onClick(View v)
@@ -105,6 +117,8 @@ public class SignActivity extends Activity implements OnClickListener
 				    		LoadingHandler.sendEmptyMessage(-1);
 				    		ShowInputDialog(user,"","");
 				    	}
+				    	else
+				    		GotoNext();
 				    }
 				    else
 				    {
@@ -113,6 +127,8 @@ public class SignActivity extends Activity implements OnClickListener
 				    		LoadingHandler.sendEmptyMessage(-1);
 				    		ShowInputDialog(user,"","");
 				    	}
+				    	else
+				    		GotoNext();
 //						Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
 //						startActivity(intent);
 //						finish();
@@ -130,38 +146,29 @@ public class SignActivity extends Activity implements OnClickListener
 		}
 		else if(v.getId() == R.id.btn_email_sign_in_button)
 		{
-			attemptLogin();
+			attemptEmailLogin();
 		}
 		
 	}
 	
-//	protected void onSessionOpened()
-//	{
-//		SPUtil.putString(getApplicationContext(), "my_id", "fantasysa@gmail.com");
-//		Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
-//		startActivity(intent);
-//		finish();
-//    }
-//	
-//	private class MySessionStatusCallback implements SessionCallback
-//	{
-//        @Override
-//        public void onSessionOpened()
-//        {
-//            // 프로그레스바를 보이고 있었다면 중지하고 세션 오픈후 보일 페이지로 이동
-//        	SignActivity.this.onSessionOpened();
-//        }
-//
-//
-//		@Override
-//		public void onSessionClosed(KakaoException exception)
-//		{
-//            // 프로그레스바를 보이고 있었다면 중지하고 세션 오픈을 못했으니 다시 로그인 버튼 노출.
-//            loginButton.setVisibility(View.VISIBLE);
-//			
-//		}
-//
-//    }
+
+	
+	protected void onSessionOpened()
+	{
+		KakaoTalkService.requestProfile(new MyTalkHttpResponseHandler<KakaoTalkProfile>() {
+	        @Override
+	        protected void onHttpSuccess(final KakaoTalkProfile talkProfile)
+	        {
+	        	final String nickName = talkProfile.getNickName();
+	        	  
+	      		SPUtil.putString(getApplicationContext(), us.opcam.camera.util.Constants.Extra.MY_NICK, nickName);	      		
+
+	    		SignupViaKakao(nickName);	
+	        }
+	    });
+    }
+	
+
 
 	
 	
@@ -178,7 +185,7 @@ public class SignActivity extends Activity implements OnClickListener
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
-	public void attemptLogin()
+	public void attemptEmailLogin()
 	{
 		// Reset errors.
 		EDT_id.setError(null);
@@ -225,6 +232,42 @@ public class SignActivity extends Activity implements OnClickListener
 			
 			
 		}
+	}
+	
+	// 카카오를 통해 로그인
+	private void SignupViaKakao(final String nick)
+	{
+		final ParseUser user = new ParseUser();
+		user.setUsername(nick);
+		user.setPassword("null");
+		
+		LoadingHandler.sendEmptyMessage(6);
+		user.signUpInBackground(new SignUpCallback()
+		{
+		  public void done(ParseException e)
+		  {
+		    if (e == null)	// 가입 성공
+		    {				
+		    	LoadingHandler.sendEmptyMessage(-1);	// sign up finish
+		    	ShowInputDialog(user,"",nick);
+		    }
+		    else	// 내부캐시에 기록은 없지만, 서버에 카카오로 가입되어 있는 경우. (앱재설치나 기기변경 등)
+		    {
+		    	ParseUser.logInInBackground(nick, "null", new LogInCallback()	// 카카오 로그인은 (닉네임/null)
+		    	{
+	    		  public void done(ParseUser user, ParseException e)
+	    		  {
+	    			  LoadingHandler.sendEmptyMessage(-1);	// sign up finish
+	  		    	  ShowInputDialog(user,"",nick);		// 성공하면
+	    		  }
+		    	});
+
+		    	
+		    }
+		  }
+		});
+		
+
 	}
 
 
@@ -343,6 +386,11 @@ public class SignActivity extends Activity implements OnClickListener
 				LoadingDL.setMessage("Updating information...");
 		        LoadingDL.show();
 			}
+			if(msg.what==6)
+			{
+				LoadingDL.setMessage("sign via kakao...");
+		        LoadingDL.show();
+			}
 		}
 	};
 	
@@ -371,6 +419,52 @@ public class SignActivity extends Activity implements OnClickListener
 		return true;
 	}
 	
+	/// 카카오톡 세션과 리스폰스핸들러
+	private abstract class MyTalkHttpResponseHandler<T> extends KakaoTalkHttpResponseHandler<T> {
+        @Override
+        protected void onHttpSessionClosedFailure(final APIErrorResult errorResult) {
+            //redirectLoginActivity();
+        }
+
+        @Override
+        protected void onNotKakaoTalkUser(){
+            Toast.makeText(getApplicationContext(), "not a KakaoTalk user", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onFailure(final APIErrorResult errorResult) {
+            Toast.makeText(getApplicationContext(), "failed : " + errorResult, Toast.LENGTH_SHORT).show();
+        }
+    }
+	
+	private class MySessionStatusCallback implements SessionCallback
+	{
+        @Override
+        public void onSessionOpened()
+        {
+            // 프로그레스바를 보이고 있었다면 중지하고 세션 오픈후 보일 페이지로 이동
+        	SignActivity.this.onSessionOpened();
+        }
+
+
+		@Override
+		public void onSessionClosed(KakaoException exception)
+		{
+            // 프로그레스바를 보이고 있었다면 중지하고 세션 오픈을 못했으니 다시 로그인 버튼 노출.
+            loginButton.setVisibility(View.VISIBLE);
+			
+		}
+
+    }
+	
+	private void GotoNext()
+	{
+		Intent intent= new Intent(SignActivity.this, CameraPreview2.class);
+		startActivity(intent);
+		finish();
+	}
+	
+	
 	private void ShowAlertDialog(String strTitle, String strContent, String strButton)
 	{
 		new AlertDialog.Builder(this)
@@ -382,6 +476,8 @@ public class SignActivity extends Activity implements OnClickListener
 		.show();
 	}
 
+	
+	
 
 	private void ShowInputDialog(final ParseUser user, String email, String nick)
 	{
