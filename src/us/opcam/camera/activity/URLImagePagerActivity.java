@@ -137,6 +137,7 @@ public class URLImagePagerActivity extends Activity
 			ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
 			TextView txtName = (TextView) imageLayout.findViewById(R.id.txt_name);
 			TextView txtDate = (TextView) imageLayout.findViewById(R.id.txt_date);
+			final TextView txtLoading = (TextView) imageLayout.findViewById(R.id.txt_loading);
 			final ProgressBar progress = (ProgressBar) imageLayout.findViewById(R.id.loading);
 			
 			txtName.setText(arrName.get(position));	// 이미지 작성자 이름과 날짜를 띄워준다.
@@ -148,6 +149,7 @@ public class URLImagePagerActivity extends Activity
 				public void onLoadingStarted(String imageUri, View view)
 				{
 					progress.setVisibility(View.VISIBLE);
+					txtLoading.setVisibility(View.VISIBLE);
 				}
 
 				@Override
@@ -181,13 +183,16 @@ public class URLImagePagerActivity extends Activity
 				public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage)
 				{
 					progress.setVisibility(View.GONE);
+					txtLoading.setVisibility(View.GONE);
 				}
 			 }, new ImageLoadingProgressListener()
 			 {
 				 @Override
-				 public void onProgressUpdate(String imageUri, View view, int current,
-						 int total) {
-					 progress.setProgress(Math.round(100.0f * current / total));
+				 public void onProgressUpdate(String imageUri, View view, int current, int total)
+				 {
+					 double lfProgressPrecent= 100.0f * current / total;
+					 progress.setProgress( (int) Math.round(lfProgressPrecent) );
+					 txtLoading.setText(lfProgressPrecent+"%");
 				 }
 			 }
 			);

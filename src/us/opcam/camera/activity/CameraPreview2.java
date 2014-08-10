@@ -12,6 +12,7 @@ import us.opcam.camera.R;
 import us.opcam.camera.util.SPUtil;
 import us.opcam.camera.view.CameraView;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +30,8 @@ import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.view.View;
@@ -69,12 +72,38 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	
 	private Uri uCurrentPhoto= null;
 	
+	private ProgressDialog LoadingDL;	// 프로그레스 다이어로그
+	
 	//SharedPreferences prefs= null;	// shared preference
     
+	// 로딩 프로그레스 부분을 모두 핸들러로 관리한다.
+	public Handler LoadingHandler = new Handler()
+	{
+		public void handleMessage(Message msg)
+		{
+			if(msg.what==0)
+			{
+				LoadingDL.hide();
+			}
+			if(msg.what==1)
+			{
+				LoadingDL.setMessage("Loading pictures...");
+		        LoadingDL.show();
+			}
+			if(msg.what==2)
+			{
+				LoadingDL.setMessage("Loading...");
+		        LoadingDL.show();
+			}
+		}
+	};
+		
     @Override
 	protected void onCreate(Bundle savedInstanceState)
     {
     	mContext= this.getApplicationContext();
+    	LoadingDL = new ProgressDialog(this);
+    	
     	String myID= SPUtil.getString(mContext, us.opcam.camera.util.Constants.Extra.MY_EMAIL);
     	
     	if(myID == null)
@@ -131,6 +160,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		        ShutButton.setText("");
 		        ShutButton.setTag("ME");
 				ShutButton.setEnabled(true);
+				
+				LoadingHandler.sendEmptyMessage(0);
 			}
     	};
     	
@@ -184,6 +215,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
 				
 				// 사진을 다시 찍을 수 있도록 초기화
 				RefreshAllView();
+				
+				LoadingHandler.sendEmptyMessage(0);
 			}
     	};
         
@@ -201,6 +234,14 @@ public class CameraPreview2 extends Activity implements OnClickListener
         this.RefreshAllView();
     }
     
+	@Override
+	protected void onResume()
+	{
+    	LoadingHandler.sendEmptyMessage(0);
+    	
+		super.onResume();
+	}
+
 	/**
 	 * opcam server upload
 	 */
@@ -240,12 +281,14 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		{
 			if(ShutButton.getTag().equals("YOU"))
 			{
+				LoadingHandler.sendEmptyMessage(2);
 				mCView1.mCamera.takePicture(null, null, mPicture1);
 				//ShutButton.setText("Loading...");
 				ShutButton.setEnabled(false);
 			}
 			else if(ShutButton.getTag().equals("ME"))
 			{	
+				LoadingHandler.sendEmptyMessage(2);
 				mCView2.mCamera.takePicture(null, null, mPicture2);
 				
 				//ShutButton.setText("Loading...");
@@ -262,6 +305,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		}
 		else if(v.getId() == R.id.btn_gallery)
 		{
+			LoadingHandler.sendEmptyMessage(1);
 			Intent intent= new Intent(CameraPreview2.this, GalleryTabsActivity.class);
 			startActivity(intent);
 		}

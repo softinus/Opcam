@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +50,7 @@ public class LocalGalleryFragment extends Fragment
 	@Override
 	public void onStart()
 	{
+		Log.d("LocalGallery", "=========onStart1");
 		//setContentView(R.layout.activity_gallery);
 		
 		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
@@ -85,6 +87,7 @@ public class LocalGalleryFragment extends Fragment
 			}
 
 		});
+		Log.d("LocalGallery", "=========onStart2");
 		
 		super.onStart();		
 	}

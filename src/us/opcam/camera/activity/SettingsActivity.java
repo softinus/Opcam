@@ -49,6 +49,8 @@ public class SettingsActivity extends PreferenceActivity  implements SharedPrefe
 		fakeHeader.setTitle("CAMERA SETTING");
 		getPreferenceScreen().addPreference(fakeHeader);
 		addPreferencesFromResource(R.xml.pref_cameraoption);
+		
+		
 
 	}
 
