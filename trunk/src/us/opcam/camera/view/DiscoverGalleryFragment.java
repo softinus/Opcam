@@ -8,11 +8,13 @@ import java.util.List;
 
 import us.opcam.camera.R;
 import us.opcam.camera.activity.URLImagePagerActivity;
+import us.opcam.camera.util.Constants;
 import us.opcam.camera.util.Constants.Extra;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +40,9 @@ public class DiscoverGalleryFragment extends Fragment
 	
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	//ArrayList<ImageItem> arrImages= null;
-	ArrayList<String> arrImages= null;
-	final ArrayList<String> arrUploadDate= new ArrayList<String>();
-	final ArrayList<String> arrUploadName= new ArrayList<String>();
+	static ArrayList<String> arrImages= new ArrayList<String>();
+	final static ArrayList<String> arrUploadDate= new ArrayList<String>();
+	final static ArrayList<String> arrUploadName= new ArrayList<String>();
 	
 	DisplayImageOptions options;
 	
@@ -58,7 +60,9 @@ public class DiscoverGalleryFragment extends Fragment
 	@Override
 	public void onStart()
 	{
+		Log.d("====Discover", "=========onStart1");
 		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
+		Log.d("====Discover", "=========onStart2");
 		
 		// 데이터가 아무것도 없으면
 		if(arrImages == null || arrImages.isEmpty()) 
@@ -68,11 +72,7 @@ public class DiscoverGalleryFragment extends Fragment
 			getActivity().finish();
 			return;
 		}
-		
-		Collections.reverse(arrImages);	// 최근 찍은 것이 위로 가게
-		Collections.reverse(arrUploadDate);	
-		Collections.reverse(arrUploadName);	
-		
+				
 		// 이미지 옵션.
 		options = new DisplayImageOptions.Builder()
 		.showImageOnLoading(R.drawable.img_round_progress)
@@ -97,6 +97,7 @@ public class DiscoverGalleryFragment extends Fragment
 				startImagePagerActivity(position);
 			}
 		});
+		Log.d("====Discover", "=========onStart3");
 
 		super.onStart();
 	}
@@ -129,6 +130,9 @@ public class DiscoverGalleryFragment extends Fragment
 	// Parse 서버로부터 사진들의 url 경로들을 가져온다.
 	protected ArrayList<String> getData()
 	{
+		if(Constants.bRefreshed)	// 이미 리프레쉬 되었으면
+			return arrImages;
+		
 		arrUploadDate.clear();
 		arrUploadName.clear();
 		final ArrayList<String> arrPicList= new ArrayList<String>();
@@ -157,26 +161,13 @@ public class DiscoverGalleryFragment extends Fragment
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		query.findInBackground(new FindCallback<ParseObject>()
-//		{
-//		    public void done(List<ParseObject> picList, ParseException e)
-//		    {
-//		        if (e == null)
-//		        {
-//		            Log.d("pictures", "Retrieved " + picList.size() + " pictures");
-//		            
-//		            for(ParseObject p : picList)
-//		            {
-//		            	ParseFile file= (ParseFile) p.get("Picture");
-//		            	ImageItem item= new ImageItem( file.getUrl() );
-//		            	arrPicList.add(item);		            	
-//		            }
-//		            
-//		        } else {
-//		            Log.d("pictures", "Error: " + e.getMessage());
-//		        }
-//		    }
-//		});
+		
+		{
+			Collections.reverse(arrPicList);	// 최근 찍은 것이 위로 가게
+			Collections.reverse(arrUploadDate);	
+			Collections.reverse(arrUploadName);	
+		}
+		Constants.bRefreshed= true;
 		return arrPicList;
 	}
 	

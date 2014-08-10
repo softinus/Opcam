@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:padding="1dip" >
@@ -8,7 +8,7 @@
         android:id="@+id/image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_centerInParent="true"
         android:adjustViewBounds="true"
         android:contentDescription="@string/descr_image" />
 
@@ -16,24 +16,38 @@
         android:id="@+id/loading"
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:layout_gravity="center_vertical|center_horizontal"
+		android:layout_centerInParent="true"
+		android:max="100"
         style="?android:attr/progressBarStyleHorizontal"
         android:progressDrawable="@drawable/progressbar_theme"
         android:visibility="visible" />
     
     <TextView 
+        android:id="@+id/txt_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_above="@+id/loading"
+        android:layout_marginBottom="10dp"
+        />
+    
+    
+    
+	<TextView 
         android:id="@+id/txt_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:layout_marginBottom="20dp"
+        android:layout_marginRight="5dp"        
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         />
-    
+
     <TextView 
         android:id="@+id/txt_date"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
+        android:layout_height="wrap_content"        
+        android:layout_toLeftOf="@+id/txt_name"
+        android:layout_marginRight="15dp"
+        android:layout_alignParentBottom="true"
         />
-
-</FrameLayout>
+</RelativeLayout>

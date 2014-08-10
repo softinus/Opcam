@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -46,6 +47,9 @@ public class GalleryTabsActivity extends FragmentActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gallery_tabs);
+		
+		
+		Log.d("GalleryTabsActivity", "==============onCreate1");
 		
 		setTitle("Gallery");	// °¶·¯¸®
 
@@ -85,6 +89,7 @@ public class GalleryTabsActivity extends FragmentActivity
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+		Log.d("GalleryTabsActivity", "=====================onCreate2");
 	}
 
 	@Override
@@ -135,8 +140,8 @@ public class GalleryTabsActivity extends FragmentActivity
 	
 	public void GotoCameraActivity()
 	{
-		Intent intent= new Intent(GalleryTabsActivity.this, CameraPreview2.class);
-		startActivity(intent);
+		//Intent intent= new Intent(GalleryTabsActivity.this, CameraPreview2.class);
+		//startActivity(intent);
 		this.finish();
 	}
 	

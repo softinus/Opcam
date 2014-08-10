@@ -2,6 +2,8 @@ package us.opcam.camera.util;
 
 public final class Constants
 {
+	public static boolean bRefreshed= false;	// Discover gallery에서 한 번 서버에서 받아오면 대기.
+	
 	public static class Extra
 	{
 		public static final String IMAGES = "us.opcam.IMAGES";

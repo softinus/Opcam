@@ -93,14 +93,12 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback
 			mCamera= openBackFacingCameraGingerbread();			
 		}
 		
-    	
-    	
-    	mCamera.setDisplayOrientation(90);
-    	
-        try
-        {
-           mCamera.setPreviewDisplay(mHolder);
-        } catch (IOException exception)
+    	try
+    	{
+    		mCamera.setDisplayOrientation(90);    	
+    		mCamera.setPreviewDisplay(mHolder);
+        }
+    	catch (Exception exception)
         {
             mCamera.release();
             mCamera = null;
