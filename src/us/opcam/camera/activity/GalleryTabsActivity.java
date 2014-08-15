@@ -1,5 +1,8 @@
 package us.opcam.camera.activity;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import us.opcam.camera.R;
 import us.opcam.camera.view.DiscoverGalleryFragment;
 import us.opcam.camera.view.LocalGalleryFragment;
@@ -17,8 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class GalleryTabsActivity extends FragmentActivity
-	implements ActionBar.TabListener
+//public class GalleryTabsActivity extends FragmentActivity implements ActionBar.TabListener
+public class GalleryTabsActivity extends SherlockFragmentActivity implements ActionBar.TabListener
 {
 
 	/**
@@ -120,24 +123,22 @@ public class GalleryTabsActivity extends FragmentActivity
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
+	
+
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) 
-	{
-	     
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
+
 	    switch(item.getItemId())
 	    {
 	         
 	    case R.id.actionbar_camera:
 	    	this.GotoCameraActivity();	// 카메라 버튼을 누르면 카메라 찍는 화면으로 넘어간다.
 	        break;
-	         
-	    default:
-	        return false;
 	    }
-	    return true;
+		return super.onOptionsItemSelected(item);
 	}
-	
-	
+
 	public void GotoCameraActivity()
 	{
 		//Intent intent= new Intent(GalleryTabsActivity.this, CameraPreview2.class);
@@ -147,12 +148,13 @@ public class GalleryTabsActivity extends FragmentActivity
 	
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu)
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.gallery, menu);
-		return true;
+		getSupportMenuInflater().inflate(R.menu.gallery, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
+
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction)
