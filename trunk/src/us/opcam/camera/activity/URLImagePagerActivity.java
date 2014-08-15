@@ -18,6 +18,8 @@ package us.opcam.camera.activity;
 import java.util.ArrayList;
 
 import us.opcam.camera.R;
+import us.opcam.camera.util.Constants;
+import us.opcam.camera.util.SPUtil;
 import us.opcam.camera.util.Constants.Extra;
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -25,7 +27,9 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -33,6 +37,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -44,7 +50,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 /**
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)
  */
-public class URLImagePagerActivity extends Activity
+public class URLImagePagerActivity extends SherlockActivity
 {
 	
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
@@ -52,21 +58,39 @@ public class URLImagePagerActivity extends Activity
 	DisplayImageOptions options;
 
 	ViewPager pager;
+	ArrayList<String> imagesAuthor= null;
+	ArrayList<String> imagesCreateDate= null;
+	
+	private boolean bThisPicMine= false;
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		if(bThisPicMine)	// 이 사진이 내 사진이면 
+		{
+			menu.add("Delete")
+		    .setIcon(R.drawable.icon_delete)
+		    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		}
+
+		return super.onCreateOptionsMenu(menu);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.discover_image_pager);
+		
 
 		Bundle bundle = getIntent().getExtras();
 		assert bundle != null;
 		
 		// intent로 받아온 bundle을 풀어서 가져온다.
 		String[] imageUrls = bundle.getStringArray(Extra.IMAGES);
-		ArrayList<String> imagesAuthor = bundle.getStringArrayList(Extra.IMAGES_AUTHOR);
-		ArrayList<String> imagesCreateDate = bundle.getStringArrayList(Extra.IMAGES_CREATE_DATE);
-		int pagerPosition = bundle.getInt(Extra.IMAGE_POSITION, 0);
+		imagesAuthor = bundle.getStringArrayList(Extra.IMAGES_AUTHOR);
+		imagesCreateDate = bundle.getStringArrayList(Extra.IMAGES_CREATE_DATE);
+		int pagerPosition = bundle.getInt(Extra.IMAGE_POSITION, 0);	// 선택한 이미지 포지션
 
 		if (savedInstanceState != null)
 		{
@@ -91,6 +115,45 @@ public class URLImagePagerActivity extends Activity
 		pager = (ViewPager) findViewById(R.id.pager);
 		pager.setAdapter(new ImagePagerAdapter(imageUrls, imagesAuthor, imagesCreateDate));
 		pager.setCurrentItem(pagerPosition);
+		OnPageChangeListener mPageChangeListener = new OnPageChangeListener() {
+
+		    @Override
+		    public void onPageScrollStateChanged(int arg0) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+		    @Override
+		    public void onPageScrolled(int arg0, float arg1, int arg2) {
+		        // TODO Auto-generated method stub
+
+		    }
+
+		    @Override
+		    public void onPageSelected(int pos)
+		    {
+				String nick= SPUtil.getString(getApplicationContext(), Constants.Extra.MY_NICK);
+				if(imagesAuthor.get(pos).equals(nick))	// 선택한 이미지가 내 것이라면...
+					bThisPicMine= true;
+				else
+					bThisPicMine= false;
+				
+				invalidateOptionsMenu();
+
+		    }
+
+		};
+		pager.setOnPageChangeListener(mPageChangeListener);
+		
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item)
+	{
+        Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT).show();
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

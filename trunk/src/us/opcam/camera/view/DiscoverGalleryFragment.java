@@ -13,7 +13,6 @@ import us.opcam.camera.util.Constants.Extra;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +24,8 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseException;
@@ -53,6 +54,13 @@ public class DiscoverGalleryFragment extends SherlockFragment
 	}
 
 	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+	{
+
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{		
 		return inflater.inflate(R.layout.fragment_discover_gallery, container, false);
@@ -61,6 +69,7 @@ public class DiscoverGalleryFragment extends SherlockFragment
 	@Override
 	public void onStart()
 	{
+		//setHasOptionsMenu(true);
 		Log.d("====Discover", "=========onStart1");
 		arrImages= getData();	// 찍은 사진 데이터들을 얻어와서
 		Log.d("====Discover", "=========onStart2");
