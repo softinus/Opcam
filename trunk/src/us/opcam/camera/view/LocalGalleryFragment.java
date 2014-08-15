@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.actionbarsherlock.app.SherlockFragment;
+
 import us.opcam.camera.R;
 import us.opcam.camera.activity.CameraPreview2;
 import us.opcam.camera.activity.LocalImageZoomPagerActivity;
@@ -28,7 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 
-public class LocalGalleryFragment extends Fragment
+public class LocalGalleryFragment extends SherlockFragment
 {
 	
 	private GridView gridView;
@@ -93,16 +95,19 @@ public class LocalGalleryFragment extends Fragment
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item)
 	{
+
 		switch (item.getItemId())
 		{
 		case R.id.actionbar_camera:
 			GotoCamera();
 			break;
 		}
-		return true;
+		
+		return super.onOptionsItemSelected(item);
 	}
+
 	
 	// 이미지 리스트 중 Uri만을 추려낸다.
 	private ArrayList<Uri> getParcelData()

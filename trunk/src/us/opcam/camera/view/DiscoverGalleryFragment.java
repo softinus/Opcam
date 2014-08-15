@@ -24,6 +24,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseException;
@@ -31,7 +32,7 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-public class DiscoverGalleryFragment extends Fragment
+public class DiscoverGalleryFragment extends SherlockFragment
 {
 	//private GridView gridView;
 	//private LocalGridViewAdapter customGridAdapter;
