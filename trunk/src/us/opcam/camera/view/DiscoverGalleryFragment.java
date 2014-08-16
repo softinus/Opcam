@@ -9,6 +9,7 @@ import java.util.List;
 import us.opcam.camera.R;
 import us.opcam.camera.activity.URLImagePagerActivity;
 import us.opcam.camera.util.Constants;
+import us.opcam.camera.util.SPUtil;
 import us.opcam.camera.util.Constants.Extra;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,8 +27,11 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+import com.kakao.authorization.AuthorizationResult.RESULT_CODE;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -78,7 +82,7 @@ public class DiscoverGalleryFragment extends SherlockFragment
 		if(arrImages == null || arrImages.isEmpty()) 
 		{
 			super.onStart();
-			toast("No pictures on opcam folder");
+			toast("No pictures on opcam server");
 			getActivity().finish();
 			return;
 		}
@@ -126,7 +130,8 @@ public class DiscoverGalleryFragment extends SherlockFragment
 		intent.putExtra(Extra.IMAGES_AUTHOR, arrUploadName);
 		intent.putExtra(Extra.IMAGES_CREATE_DATE, arrUploadDate);
 		intent.putExtra(Extra.IMAGE_POSITION, position);
-		startActivity(intent);
+		//startActivity(intent);
+		startActivityForResult(intent, 1);
 	}
 	
 //	private void startImagePagerActivity(int position)
@@ -137,6 +142,51 @@ public class DiscoverGalleryFragment extends SherlockFragment
 //		startActivity(intent);
 //	}
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == 1)	// image에서 넘어왔으면...
+		{
+			if(data == null)	// 삭제할 것이 없으면 그냥 넘어감.
+				return;
+			
+			int forDeleteIdx= data.getIntExtra(Constants.Extra.DEL_POS_SERVER, -1);
+			
+			DeleteFromServer(forDeleteIdx);
+			arrImages.remove(forDeleteIdx);
+			customGridAdapter.notifyDataSetChanged();
+		}
+		
+	}
+	
+	// server에서 해당하는 사진을 삭제한다.
+	protected void DeleteFromServer(int pos)
+	{
+		if(pos== -1)
+			return;
+				
+		//TODO
+		ParseQuery<ParseObject> query = ParseQuery.getQuery("Pictures");	// Pictures 데이터 테이블 중에서
+		query.orderByDescending("createdAt");
+		query.setSkip(pos);
+		query.getFirstInBackground(new GetCallback<ParseObject>()
+		{
+			@Override
+			public void done(ParseObject arg0, ParseException arg1)
+			{
+				if(arg1==null)
+				{
+					String name= (String) arg0.get("Name");
+					if(name.equals(SPUtil.getString(getActivity(), Constants.Extra.MY_NICK)))
+						arg0.deleteInBackground();
+				}
+				
+			}
+		});
+	}
+	
+
 	// Parse 서버로부터 사진들의 url 경로들을 가져온다.
 	protected ArrayList<String> getData()
 	{

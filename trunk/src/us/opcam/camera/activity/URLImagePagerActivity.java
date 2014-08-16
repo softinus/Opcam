@@ -19,9 +19,11 @@ import java.util.ArrayList;
 
 import us.opcam.camera.R;
 import us.opcam.camera.util.Constants;
-import us.opcam.camera.util.SPUtil;
 import us.opcam.camera.util.Constants.Extra;
-import android.app.Activity;
+import us.opcam.camera.util.SPUtil;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -61,12 +63,13 @@ public class URLImagePagerActivity extends SherlockActivity
 	ArrayList<String> imagesAuthor= null;
 	ArrayList<String> imagesCreateDate= null;
 	
-	private boolean bThisPicMine= false;
+	private boolean bThisPicMine= false;	// ì´ ì‚¬ì§„ì´ ë‚˜ì˜ ì‚¬ì§„ì¸ê³ 
+	private int pagerPosition= -1; // í˜„ì¬ ì‚¬ì§„ì˜ í¬ì§€ì…˜
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		if(bThisPicMine)	// ÀÌ »çÁøÀÌ ³» »çÁøÀÌ¸é 
+		if(bThisPicMine)	// ì´ ì‚¬ì§„ì´ ë‚´ ì‚¬ì§„ì´ë©´ 
 		{
 			menu.add("Delete")
 		    .setIcon(R.drawable.icon_delete)
@@ -86,11 +89,11 @@ public class URLImagePagerActivity extends SherlockActivity
 		Bundle bundle = getIntent().getExtras();
 		assert bundle != null;
 		
-		// intent·Î ¹Ş¾Æ¿Â bundleÀ» Ç®¾î¼­ °¡Á®¿Â´Ù.
+		// intentë¡œ ë°›ì•„ì˜¨ bundleì„ í’€ì–´ì„œ ê°€ì ¸ì˜¨ë‹¤.
 		String[] imageUrls = bundle.getStringArray(Extra.IMAGES);
 		imagesAuthor = bundle.getStringArrayList(Extra.IMAGES_AUTHOR);
 		imagesCreateDate = bundle.getStringArrayList(Extra.IMAGES_CREATE_DATE);
-		int pagerPosition = bundle.getInt(Extra.IMAGE_POSITION, 0);	// ¼±ÅÃÇÑ ÀÌ¹ÌÁö Æ÷Áö¼Ç
+		pagerPosition = bundle.getInt(Extra.IMAGE_POSITION, 0);	// ì„ íƒí•œ ì´ë¯¸ì§€ í¬ì§€ì…˜
 
 		if (savedInstanceState != null)
 		{
@@ -111,12 +114,11 @@ public class URLImagePagerActivity extends SherlockActivity
 			.displayer(new FadeInBitmapDisplayer(300))
 			.build();
 
-		// ¾î´ğÅÍ¿¡ °¡Á®¿Â Á¤º¸µéÀ» pager¿¡¼­ ¶ç¿ï ¼ö ÀÖµµ·Ï ³Ö¾îÁØ´Ù.
+		// ì–´ëŒ‘í„°ì— ê°€ì ¸ì˜¨ ì •ë³´ë“¤ì„ pagerì—ì„œ ë„ìš¸ ìˆ˜ ìˆë„ë¡ ë„£ì–´ì¤€ë‹¤.
 		pager = (ViewPager) findViewById(R.id.pager);
 		pager.setAdapter(new ImagePagerAdapter(imageUrls, imagesAuthor, imagesCreateDate));
 		pager.setCurrentItem(pagerPosition);
 		OnPageChangeListener mPageChangeListener = new OnPageChangeListener() {
-
 		    @Override
 		    public void onPageScrollStateChanged(int arg0) {
 		        // TODO Auto-generated method stub
@@ -132,27 +134,55 @@ public class URLImagePagerActivity extends SherlockActivity
 		    @Override
 		    public void onPageSelected(int pos)
 		    {
-				String nick= SPUtil.getString(getApplicationContext(), Constants.Extra.MY_NICK);
-				if(imagesAuthor.get(pos).equals(nick))	// ¼±ÅÃÇÑ ÀÌ¹ÌÁö°¡ ³» °ÍÀÌ¶ó¸é...
-					bThisPicMine= true;
-				else
-					bThisPicMine= false;
-				
-				invalidateOptionsMenu();
-
+		    	CheckImageAuthorAndRefreshOptionsMenu(pos);
 		    }
 
 		};
 		pager.setOnPageChangeListener(mPageChangeListener);
+		CheckImageAuthorAndRefreshOptionsMenu(pagerPosition);	// ì²˜ìŒ create í•  ë•Œë„ ì²´í¬í•¨.
+	}
+	
+	private void CheckImageAuthorAndRefreshOptionsMenu(int pos)
+	{
+		String nick= SPUtil.getString(getApplicationContext(), Constants.Extra.MY_NICK);
+		if(imagesAuthor.get(pos).equals(nick))	// ì„ íƒí•œ ì´ë¯¸ì§€ê°€ ë‚´ ê²ƒì´ë¼ë©´...
+			bThisPicMine= true;
+		else
+			bThisPicMine= false;
 		
-
+		invalidateOptionsMenu();
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item)
 	{
-        Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Got click: " + item.toString(), Toast.LENGTH_SHORT).show();
+		
+		AlertDialog.Builder alert_confirm = new AlertDialog.Builder(this);
+		alert_confirm.setMessage("Are you delete this picture?").setCancelable(false).setPositiveButton("Yes",
+		new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        // 'YES'
+				Intent intent = getIntent();
+				intent.putExtra(Constants.Extra.DEL_POS_SERVER, pagerPosition);
+				setResult(RESULT_OK,intent);
+				finish();
+		    }
+		}).setNegativeButton("No",
+		new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        // 'No'
+		    return;
+		    }
+		});
+		AlertDialog alert = alert_confirm.create();
+		alert.show();
+		
+
+		
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -203,7 +233,7 @@ public class URLImagePagerActivity extends SherlockActivity
 			final TextView txtLoading = (TextView) imageLayout.findViewById(R.id.txt_loading);
 			final ProgressBar progress = (ProgressBar) imageLayout.findViewById(R.id.loading);
 			
-			txtName.setText(arrName.get(position));	// ÀÌ¹ÌÁö ÀÛ¼ºÀÚ ÀÌ¸§°ú ³¯Â¥¸¦ ¶ç¿öÁØ´Ù.
+			txtName.setText(arrName.get(position));	// ì´ë¯¸ì§€ ì‘ì„±ì ì´ë¦„ê³¼ ë‚ ì§œë¥¼ ë„ì›Œì¤€ë‹¤.
 			txtDate.setText(arrDate.get(position));
 
 			imageLoader.displayImage(images[position], imageView, options, new SimpleImageLoadingListener()
