@@ -98,6 +98,8 @@ public class GalleryTabsActivity extends SherlockFragmentActivity implements Act
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		super.onActivityResult(requestCode, resultCode, data);
+		
 		if(requestCode != 0)
 			return;
 		
@@ -120,7 +122,6 @@ public class GalleryTabsActivity extends SherlockFragmentActivity implements Act
 //		customGridAdapter = new GridViewAdapter(this, R.layout.row_grid, arrImages);
 //		gridView.setAdapter(customGridAdapter);
 		
-		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
 	
