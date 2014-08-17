@@ -367,15 +367,21 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		
 		String strSaveFileName= "opcam_"+strDate+".jpg";
 		
-		int nCount= SPUtil.getInt(mContext, "count");
-		
-		if(nCount == -1)
+		File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/");
+		if(!dir.exists())
 		{
-			SPUtil.putInt(mContext, "count", 1);
-			nCount= 0;
+			dir.mkdir();
 		}
-		++nCount;
-		SPUtil.putInt(mContext, "count", nCount);
+		int nCount= dir.list().length + 1;
+		
+//		int nCount= SPUtil.getInt(mContext, "count");		
+//		if(nCount == -1)
+//		{
+//			SPUtil.putInt(mContext, "count", 1);
+//			nCount= 0;
+//		}
+//		++nCount;
+//		SPUtil.putInt(mContext, "count", nCount);
 		strSaveFileName= "opcam_"+ nCount +"_"+ strDate +".jpg";
 		
 		
@@ -395,8 +401,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		{
 			Toast.makeText(this, "Save file successfully.", Toast.LENGTH_SHORT).show();
 			
-			File dir=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);			
-			uRes= Uri.fromFile(dir);
+			File savefile=new File(Environment.getExternalStorageDirectory(),"/opcam/"+strSaveFileName);			
+			uRes= Uri.fromFile(savefile);
 		}
 		mBitmapCopy1= null;
 		mBitmapCopy2= null;
