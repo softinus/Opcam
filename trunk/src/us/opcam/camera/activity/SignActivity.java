@@ -32,6 +32,7 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
+import com.parse.RequestPasswordResetCallback;
 import com.parse.SignUpCallback;
 
 public class SignActivity extends Activity implements OnClickListener
@@ -42,7 +43,7 @@ public class SignActivity extends Activity implements OnClickListener
 	String mEmail="";
 	String mPassword="";
 
-	Button BTN_sign, BTN_facebook, BTN_kakao;
+	Button BTN_sign, BTN_facebook, BTN_kakao, BTN_resettingPW;
 	EditText EDT_id, EDT_pw;
 	
 	private LoginButton loginButton;
@@ -62,11 +63,13 @@ public class SignActivity extends Activity implements OnClickListener
 		EDT_pw= (EditText) findViewById(R.id.txt_password);
 		BTN_sign= (Button) findViewById(R.id.btn_email_sign_in_button);
 		BTN_facebook= (Button) findViewById(R.id.btn_login_passport_facebook);
-		BTN_kakao= (Button) findViewById(R.id.btn_login_passport_kakao);		
+		BTN_kakao= (Button) findViewById(R.id.btn_login_passport_kakao);
+		BTN_resettingPW= (Button) findViewById(R.id.resetting_pw);
         
 		BTN_sign.setOnClickListener(this);
 		BTN_facebook.setOnClickListener(this);
 		BTN_kakao.setOnClickListener(this);
+		BTN_resettingPW.setOnClickListener(this);
 
 		// 로그인 버튼에 로그인 결과를 받을 콜백을 설정한다.
         loginButton = (LoginButton) findViewById(R.id.img_login_passport_kakao);
@@ -135,6 +138,10 @@ public class SignActivity extends Activity implements OnClickListener
 				    }
 				  }
 			});
+		}
+		else if(v.getId() == R.id.resetting_pw)
+		{
+			this.ShowResettingEmailDialog();
 		}
 		else if(v.getId() == R.id.btn_login_passport_kakao)
 		{
@@ -477,6 +484,44 @@ public class SignActivity extends Activity implements OnClickListener
 	}
 
 	
+	private void ShowResettingEmailDialog()
+	{		
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Reset Your Opcam Password.");
+		alert.setMessage("Submit your email address and we'll send you a link to reset your password.");
+		final EditText emailBox = new EditText(this);
+		emailBox.setHint("email");
+		
+		alert.setView(emailBox);
+
+		alert.setPositiveButton("send", new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				String email= emailBox.getText().toString();
+				ParseUser.requestPasswordResetInBackground(email,
+	                    new RequestPasswordResetCallback()
+				{
+					public void done(ParseException e)
+					{
+						if (e == null)
+						{
+						// An email was successfully sent with reset instructions.
+							ShowAlertDialog("info","email has been sent.","okay");
+						} else {
+						// Something went wrong. Look at the ParseException to see what's up.
+							ShowAlertDialog("error", e.toString(), "okay");
+						}
+					}
+				});
+			}
+			
+		});
+		
+		alert.show();
+		
+	}
 	
 
 	private void ShowInputDialog(final ParseUser user, String email, String nick)
