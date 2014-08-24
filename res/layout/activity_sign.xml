@@ -84,7 +84,7 @@
                 android:id="@+id/btn_login_passport_kakao"
                 android:layout_toRightOf="@+id/login_passport_split"
                 android:layout_below="@+id/login_logo"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="62dp"
                 android:layout_marginLeft="-20dp"
                 android:background="#00000000"
                 android:textColor="#ffffffff"
@@ -169,7 +169,7 @@
                 android:textStyle="bold" />
 				
 			<Button
-                android:id="@+id/forgot_id_pw"
+                android:id="@+id/resetting_pw"
                 android:layout_below="@+id/btn_email_sign_in_button"
                 android:layout_marginTop="5dp"
                 android:background="#00000000"
