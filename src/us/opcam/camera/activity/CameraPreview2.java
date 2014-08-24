@@ -192,12 +192,14 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	            bSkipShare= SPUtil.getBoolean(mContext, "process_skip_share_step"); // 키값, 디폴트값
 	            
 	            uCurrentPhoto= SaveBitmapFile();
-	            ShareToOpcamServer();	// 찍으면 바로 올린다.
+	            
+	            	
 	            
 	            //GotoAviary(uCurrentPhoto);
 	            if(bSkipEffect)	// effect 생략,
-	            {
-	            	if(!bSkipShare)	// share 생략하면
+	            {	 
+            		ShareToOpcamServer(null);	// 찍은 후 바로 올린다.
+	            	if(!bSkipShare)	// share 생략안하면
 	            	{
 	            		GotoShareActivity(uCurrentPhoto, null);
 	            	}
@@ -245,14 +247,25 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	/**
 	 * opcam server upload
 	 */
-	public void ShareToOpcamServer()
+	public void ShareToOpcamServer(Uri UploadTarget)
 	{
-		if(uCurrentPhoto == null)
-			return;
+		Uri uriForUpload= null;
+		
+		if(UploadTarget == null) // 지정 업로드 타겟이 없는데
+		{
+			if(uCurrentPhoto == null)	// 찍은 타겟도 없으면 안됨.
+				return;
+			else
+				uriForUpload= uCurrentPhoto;	// 찍은걸로 올림.
+		}
+		else
+			uriForUpload= UploadTarget;	// 지정이 있으면 찍은 것 대신에 지정 URI로 올림.	
+		
+		
 		
 		Bitmap bmp = null;
 		try {
-			bmp = Images.Media.getBitmap(getContentResolver(), uCurrentPhoto);
+			bmp = Images.Media.getBitmap(getContentResolver(), uriForUpload);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -307,7 +320,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		{
 			LoadingHandler.sendEmptyMessage(1);
 			Intent intent= new Intent(CameraPreview2.this, GalleryTabsActivity.class);
-			startActivity(intent);
+			startActivityForResult(intent, us.opcam.camera.util.Constants.REQ.CAMERA_TO_GALLERY);
 		}
 	}
 
@@ -418,7 +431,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 		Intent newIntent = new Intent( this, FeatherActivity.class );
 		newIntent.setData( uPath );
 		newIntent.putExtra( Constants.EXTRA_IN_API_KEY_SECRET, "f5d04d92e56534ce" );
-		startActivityForResult( newIntent, 1 );
+		startActivityForResult( newIntent, us.opcam.camera.util.Constants.REQ.CAMERA_TO_AVIARY );
 	}
 
 	private void GotoShareActivity(Uri mImageUri, Bundle extra)
@@ -458,7 +471,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	    {
 	        switch( requestCode ) 
 	        {
-	            case 1:
+	            case us.opcam.camera.util.Constants.REQ.CAMERA_TO_AVIARY:
 	                // output image path
 	                Uri mImageUri = data.getData();
 	                Bundle extra = data.getExtras();
@@ -470,10 +483,29 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	                        if(changed)
 	                        	OverwriteBitmap(mImageUri);
 	                        
+	                        ShareToOpcamServer(mImageUri);	// Aviary 편집 된거 바로 올린다.
+	                        
 	                        if(!bSkipShare)	// share를 스킵하지 않으면
 	                        	GotoShareActivity(uCurrentPhoto, extra);
 	                    }
 	                break;
+	            case us.opcam.camera.util.Constants.REQ.CAMERA_TO_GALLERY:
+	            	
+	            	if(data == null)	// 삭제할 것이 없으면 그냥 넘어감.
+	    				return;
+	    			
+	    			int Status= data.getIntExtra(us.opcam.camera.util.Constants.Extra.REFRESH_DISCOVER, -1);
+	    			if(Status == -1)
+	    			{
+	    				us.opcam.camera.util.Constants.bRefreshed= false;
+	    				
+	    				LoadingHandler.sendEmptyMessage(1);
+	    				Intent intent= new Intent(CameraPreview2.this, GalleryTabsActivity.class);
+	    				startActivityForResult(intent, us.opcam.camera.util.Constants.REQ.CAMERA_TO_GALLERY);
+	    			}
+
+	                
+	            	break;
 	        }
 	    }
 	}

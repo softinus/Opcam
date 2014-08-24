@@ -7,6 +7,12 @@
 <!--         android:title="@string/action_settings"/> -->
 
     <item
+        android:id="@+id/actionbar_refresh"
+        android:icon="@drawable/bt_refresh_nor" 
+        android:showAsAction="always"
+        android:title="camera"/>
+    
+    <item
         android:id="@+id/actionbar_camera"
         android:icon="@drawable/icon_cam" 
         android:showAsAction="always"

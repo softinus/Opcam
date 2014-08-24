@@ -98,7 +98,7 @@ public class DiscoverGalleryFragment extends SherlockFragment
 		.bitmapConfig(Bitmap.Config.RGB_565)
 		.build();
 		
-		listView = (GridView) getView().findViewById(R.id.gridview); // 리스트뷰 아이디
+		listView = (GridView) getView().findViewById(R.id.frag_discover_gridview); // 리스트뷰 아이디
 		
 		// 갤러리에 각 이미지 리스트 등을 세팅.
 		customGridAdapter= new DiscoverGridViewAdapter(this.getActivity().getApplicationContext(), imageLoader, arrImages, options, arrUploadName, arrUploadDate);
@@ -131,7 +131,7 @@ public class DiscoverGalleryFragment extends SherlockFragment
 		intent.putExtra(Extra.IMAGES_CREATE_DATE, arrUploadDate);
 		intent.putExtra(Extra.IMAGE_POSITION, position);
 		//startActivity(intent);
-		startActivityForResult(intent, 1);
+		startActivityForResult(intent, Constants.REQ.DISCOVER_TO_PICTURE);
 	}
 	
 //	private void startImagePagerActivity(int position)
@@ -146,7 +146,7 @@ public class DiscoverGalleryFragment extends SherlockFragment
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == 1)	// image에서 넘어왔으면...
+		if(requestCode == Constants.REQ.DISCOVER_TO_PICTURE)	// image에서 넘어왔으면...
 		{
 			if(data == null)	// 삭제할 것이 없으면 그냥 넘어감.
 				return;
