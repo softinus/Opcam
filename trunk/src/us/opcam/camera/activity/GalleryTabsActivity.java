@@ -1,9 +1,7 @@
 package us.opcam.camera.activity;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-
 import us.opcam.camera.R;
+import us.opcam.camera.util.Constants;
 import us.opcam.camera.view.DiscoverGalleryFragment;
 import us.opcam.camera.view.LocalGalleryFragment;
 import android.app.ActionBar;
@@ -11,14 +9,13 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 //public class GalleryTabsActivity extends FragmentActivity implements ActionBar.TabListener
 public class GalleryTabsActivity extends SherlockFragmentActivity implements ActionBar.TabListener
@@ -93,6 +90,8 @@ public class GalleryTabsActivity extends SherlockFragmentActivity implements Act
 					.setTabListener(this));
 		}
 		Log.d("GalleryTabsActivity", "=====================onCreate2");
+		
+		mViewPager.setCurrentItem(Constants.nDiscoverCurrentPage);	// 저장된 페이지로 넘어감.
 	}
 
 	@Override
@@ -133,11 +132,29 @@ public class GalleryTabsActivity extends SherlockFragmentActivity implements Act
 	    switch(item.getItemId())
 	    {
 	         
+	    case R.id.actionbar_refresh:
+	    	Constants.bRefreshed= false;
+	    	
+			Intent intent = getIntent();
+			intent.putExtra(Constants.Extra.REFRESH_DISCOVER, -1);
+			setResult(RESULT_OK,intent);
+			Constants.nDiscoverCurrentPage= mViewPager.getCurrentItem();	// 페이지 저장.
+			finish();
+	    	//Intent intent= new Intent(GalleryTabsActivity.this, CameraPreview2.class);
+	    	//startActivity(intent);
+	        break;
 	    case R.id.actionbar_camera:
 	    	this.GotoCameraActivity();	// 카메라 버튼을 누르면 카메라 찍는 화면으로 넘어간다.
 	        break;
 	    }
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		Constants.nDiscoverCurrentPage= mViewPager.getCurrentItem();	// 페이지 저장.
+		super.onDestroy();
 	}
 
 	public void GotoCameraActivity()
