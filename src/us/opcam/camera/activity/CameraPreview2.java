@@ -45,6 +45,7 @@ import android.widget.Toast;
 
 import com.aviary.android.feather.FeatherActivity;
 import com.aviary.android.feather.library.Constants;
+import com.parse.ParseAnalytics;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 
@@ -101,6 +102,8 @@ public class CameraPreview2 extends Activity implements OnClickListener
     @Override
 	protected void onCreate(Bundle savedInstanceState)
     {
+		ParseAnalytics.trackAppOpened(getIntent());
+		
     	mContext= this.getApplicationContext();
     	LoadingDL = new ProgressDialog(this);
     	
