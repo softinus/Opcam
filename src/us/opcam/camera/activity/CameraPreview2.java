@@ -15,7 +15,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
@@ -27,13 +26,17 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -75,6 +78,7 @@ public class CameraPreview2 extends Activity implements OnClickListener
 	
 	private ProgressDialog LoadingDL;	// 프로그레스 다이어로그
 	
+
 	//SharedPreferences prefs= null;	// shared preference
     
 	// 로딩 프로그레스 부분을 모두 핸들러로 관리한다.
@@ -118,8 +122,43 @@ public class CameraPreview2 extends Activity implements OnClickListener
     	
     	
     	
+    	
+    	
         super.onCreate(savedInstanceState);
         
+        
+    	
+    	LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+    	 
+    	LocationListener locationListener = new LocationListener() {
+    	    @Override
+    	    public void onStatusChanged(String provider, int status, Bundle extras) {
+    	    }
+    	     
+    	    @Override
+    	    public void onProviderEnabled(String provider) {
+    	    }
+    	     
+    	    @Override
+    	    public void onProviderDisabled(String provider) {
+    	    }
+    	     
+    	    @Override
+    	    public void onLocationChanged(Location location) {
+    	        Log.d("Location", location.toString());
+    	        Toast.makeText(mContext, "Location"+ location.toString(), Toast.LENGTH_SHORT).show();
+    	        
+    	    }
+    	};	 
+    	//LocationProvider locationProvider = LocationManager.NETWORK_PROVIDER;
+    	// 또는 GPS 데이터를 이용하고자 한다면..
+    	// LocationProvider locationProvider = LocationManager.GPS_PROVIDER;
+    	 
+    	//locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);	
+    	locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+    	
+    	
+    	
         
         //prefs= PreferenceManager.getDefaultSharedPreferences(mContext);
         
